@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>広告運用ゲーム｜株式会社SKIKATTE</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="img.src/skikatteLogo.png" sizes="32x32">
+    <!-- <link href="./output.css" rel="stylesheet"> -->
+</head>
+<body>
+    <main>
+        <h1 >広告運用ゲーム</h1>
+        <p class="gameOverview">
+            Meta広告運用の基本が学べるゲームです。<br>
+            以下をクリックして説明書をお読みください。
+        </p>
+        <button id="visionButton">制作意図</button>
+        <!-- Visionモーダル -->
+        <div class="layer js-modal" id="modalVision">
+            <div class="modal">
+                <div class="modal__inner">
+                    <div class="modal__button-wrap">
+                        <button class="close-button js-close-button">
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                    <div class="modal__contents">
+                        <div class="modal__content">
+                            <div class="visionTitle">制作意図</div>
+                            <div class="visionText">
+                                <p>①ゲーム化による学習体験の向上<br>
+                                    ・現実では、施策や努力が結果に紐付くまで時間がかかり、また結果に影響を及ぼす変数も増えます。<br>
+                                    ・このゲームでは極力変数を減らし、結果をすぐに出力することで学習体験向上を目指します。<br>
+                                    ・特に広告は用語や仕組みも難しいですが、プレイする中で肌感覚として身につけられることも目指し、今後も品質を向上させていきます。<br>
+                                    <br>
+                                    ②仕事を楽しむ人を増やしたい<br>
+                                    ・制作者は『左ききのエレン』を読んでマーケ畑に踏み入りました。<br>
+                                    ・仕事の間口を増やし、ハードルを下げ、未経験のうちに仕事に具体的な興味を持てるようにしたい。<br>
+                                    ・この広告運用ゲームも、今後はクリエイティブ領域やメディアプランニングも体感できるよう開発予定で、他にも様々な職種について横展開させていく想定です。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="accordion">ゲーム概要はこちら▶︎</h2>
+            <div class="panel">
+                <p class="gameDiscription">
+                    ・<b>26ターン(半年)後の週次CV数最大化を狙いましょう。</b><br>
+                    ・キャッシュが0円になるとゲームオーバー、26ターン経過でゲーム終了です<br>
+                    ・「実行する」を押すと<b>CV数×20,000円</b>がキャッシュに振り込まれます。<br>
+                    ・<b>目標CPA以内にCPAを改善</b>させると、<b>「予算増額」を実行できます</b><br>
+                    ・アクションを組み合わせて効果を改善させ、COSTを増額していくことで、さらなるキャッシュ最大化を狙いましょう。
+                </p>
+            </div>
+        <!-- <h2 class="accordion">操作説明▶︎</h2>
+            <div class="panel">
+                <p>・画面下部の「CR変更」「LP変更」「CPN変更」の中から、改善したい数値に紐づくアクションをタップして「実行する」を押してください。<br>
+                    ・アクションは複数同時に実行できます。<br>
+                    ・CPAが目標CPA以下まで改善されると「増額提案」が実行でき、COSTを20%増額できます。<br>
+                </p>
+            </div> -->
+        <h2 class="accordion">用語解説はこちら▶︎</h2>
+        <div class="panel">
+            <div class="wordDescriptionText">
+                以下は配信結果表(画面中央)のコピーです。<br>
+                列名をタップして用語解説を立ち上げてください。
+            </div>
+            <div class="adResultContainerDescription">
+                <div class="adResultTableContainerDescription">
+                    <table>
+                        <tbody class="adResultTableDescription">
+                            <tr class="adResultTableItmesDescription">
+                                <td class="description-trigger" data-description="期間">期間</td>
+                                <td class="description-trigger" data-description="COST">COST</td>
+                                <td class="description-trigger" data-description="CPM">CPM</td>
+                                <td class="description-trigger" data-description="IMP">IMP</td>
+                                <td class="description-trigger" data-description="CTR">CTR</td>
+                                <td class="description-trigger" data-description="CVR">CVR</td>
+                                <td class="description-trigger" data-description="CV">CV</td>
+                                <td class="description-trigger" data-description="CPA">CPA</td>
+                            </tr>
+                            <tr class="adResultValueDescription">
+                                <td>wk1</td>
+                                <td class="costValue">¥5,000,000</td>
+                                <td class="cpmValue">¥5,000</td>
+                                <td class="impValue">1,000,000</td>
+                                <td class="ctrValue">0.32%</td>
+                                <td class="cvrValue">2.25%</td>
+                                <td class="cvValue">72CV</td>
+                                <td class="cpaValue">¥69,444</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- モーダル -->
+            <div class="layer js-modal" id="modalWk">
+                <div class="modal">
+                    <div class="modal__inner">
+                        <div class="modal__button-wrap">
+                            <button class="close-button js-close-button">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="modal__contents">
+                            <div class="modal__content">
+                                <div class="actionDescriptionTitle">
+                                    ◯期間
+                                </div>
+                                <div class="actionDescriptionText">
+                                    ・配信された週をwk1、wk2のように記載しています<br>
+                                    ・1ターンの実行で1週間が経過します<br>
+                                    ・新しい週(=wk)が上に更新されていきます
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer js-modal" id="modalCost">
+                <div class="modal">
+                    <div class="modal__inner">
+                        <div class="modal__button-wrap">
+                            <button class="close-button js-close-button">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="modal__contents">
+                            <div class="modal__content">
+                                <div class="actionDescriptionTitle">
+                                    ◯COST
+                                </div>
+                                <div class="actionDescriptionText">
+                                    ・COSTは広告配信費を示します<br>
+                                    ・このゲームでは週ごとの広告費を表示します<br>
+                                    ・増額提案のアクションが実行されると20%増額されます
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer js-modal" id="modalCpm">
+                <div class="modal">
+                    <div class="modal__inner">
+                        <div class="modal__button-wrap">
+                            <button class="close-button js-close-button">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="modal__contents">
+                            <div class="modal__content">
+                                <div class="actionDescriptionTitle">
+                                    ◯CPM
+                                </div>
+                                <div class="actionDescriptionText">
+                                    ・CPMは1000インプレッションあたりのコストを示します<br>
+                                    ・MetaではオークションによってCPMが決まります<br>
+                                    ・CPMはそのユーザーに対する広告主の多さと広告の品質(媒体評価)などによって決まるイメージです<br>
+                                    ・このゲームでは「CPN変更」というアクションを実行すると数値が変動します
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer js-modal" id="modalImp">
+                <div class="modal">
+                    <div class="modal__inner">
+                        <div class="modal__button-wrap">
+                            <button class="close-button js-close-button">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="modal__contents">
+                            <div class="modal__content">
+                                <div class="actionDescriptionTitle">
+                                    ◯IMP
+                                </div>
+                                <div class="actionDescriptionText">
+                                    ・インプレッション(表示回数)を示します<br>
+                                    ・COST÷CPMで算出されます。<br>
+                                    ・同じユーザーに複数回表示されてもカウントされます。<br>
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer js-modal" id="modalCtr">
+                <div class="modal">
+                    <div class="modal__inner">
+                        <div class="modal__button-wrap">
+                            <button class="close-button js-close-button">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="modal__contents">
+                            <div class="modal__content">
+                                <div class="actionDescriptionTitle">
+                                    ◯CTR
+                                </div>
+                                <div class="actionDescriptionText">
+                                    ・CTRはクリック率を示します。
+                                    ・クリック数÷インプレッション数で算出されます。
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer js-modal" id="modalCvr">
+                <div class="modal">
+                    <div class="modal__inner">
+                        <div class="modal__button-wrap">
+                            <button class="close-button js-close-button">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="modal__contents">
+                            <div class="modal__content">
+                                <div class="actionDescriptionTitle">
+                                    ◯CVR
+                                </div>
+                                <div class="actionDescriptionText">
+                                    ・CVRはコンバージョン率を示します。<br>
+                                    ・広告クリック後にコンバージョンされた割合を指します。<br>
+                                    ・CV数÷クリック数で算出されます。
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer js-modal" id="modalCv">
+                <div class="modal">
+                    <div class="modal__inner">
+                        <div class="modal__button-wrap">
+                            <button class="close-button js-close-button">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="modal__contents">
+                            <div class="modal__content">
+                                <div class="actionDescriptionTitle">
+                                    ◯CV
+                                </div>
+                                <div class="actionDescriptionText">
+                                    ・CVはコンバージョン数を示します<br>
+                                    ・資料請求や無料面談申し込みなど、その広告で設定している目的を達成された数を指します
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer js-modal" id="modalCpa">
+                <div class="modal">
+                    <div class="modal__inner">
+                        <div class="modal__button-wrap">
+                            <button class="close-button js-close-button">
+                                <span></span>
+                                <span></span>
+                            </button>
+                        </div>
+                        <div class="modal__contents">
+                            <div class="modal__content">
+                                <div class="actionDescriptionTitle">
+                                    ◯CPA
+                                </div>
+                                <div class="actionDescriptionText">
+                                    ・CPAはコンバージョンあたりのコストを示します<br>
+                                    ・COST÷CV数で算出されます<br>
+                                    ・広告主は1CVから生み出される利益から逆算して目標CPAを決めることが一般的で、目標CPA以内であればたくさん広告費を費やした方が利益を増やせます。よってこのゲームでも目標CPA以内に収まると増額提案できます。<br>
+                                    ・実際には成約(offer)に至るまでのCPOや、成約後の顧客生涯利益(LTV)まで見た上で運用することもあります。
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>  
+        </div>
+        <h2 class="accordion">各アクションの説明はこちら▶︎</h2>
+            <div class="panel">
+                <div class="actionDescriptionText">
+                    以下はアクションボタン(画面下部)のコピーです。<br>
+                    ボタンをタップして説明を立ち上げてください。
+                </div>
+                <div class="actionContainerDescription">
+                    <div class="actionBtnListDescription">
+                        <ul>
+                            <li><button id="CRBtnDescription" data-modal="modalCR">CR変更</button></li>
+                            <li><button id="LPBtnDescription" data-modal="modalLP">LP変更</button></li>
+                            <li><button id="CPNBtnDescription" data-modal="modalCPN">CPN変更</button></li>
+                            <li><button id="increaseBtnDescription" data-modal="modalIncrease">予算増額</button></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="executionConcainerDescription">
+                    <button type="button" class="executionBtnDescription">
+                        実行する
+                    </button>
+                </div>
+                <!-- モーダル -->
+                <div class="layer js-modal" id="modalCR">
+                    <div class="modal">
+                        <div class="modal__inner">
+                            <div class="modal__button-wrap">
+                                <button class="close-button js-close-button">
+                                    <span></span>
+                                    <span></span>
+                                </button>
+                            </div>
+                            <div class="modal__contents">
+                                <div class="modal__content">
+                                    <div class="actionBtnDescription">CR変更</div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯言葉の意味
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・広告バナーを変更すること<br>
+                                        　※CR=クリエイティブ
+                                    </div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯このゲームでの効果
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・CTRを変動させます。<br>
+                                        ・CTRが低い時は上がりやすく、既に高い時は上がりにくくなります。<br>
+                                        ・アクションによって悪化することもあります<br>
+                                        ・実行すると考案費とデザイン費として、キャッシュを5万円消費します。
+                                    </div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯現実での効果
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・実際にはLPに流入するユーザーの質を変えられるのでCVRも変動させ、媒体の広告評価も左右するのでCPMも変動させられます。<br>
+                                    </div>                                  
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layer js-modal" id="modalLP">
+                    <div class="modal">
+                        <div class="modal__inner">
+                            <div class="modal__button-wrap">
+                                <button class="close-button js-close-button">
+                                    <span></span>
+                                    <span></span>
+                                </button>
+                            </div>
+                            <div class="modal__contents">
+                                <div class="modal__content">
+                                    <div class="actionBtnDescription">LP変更</div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯言葉の意味
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・ランディングページを変更すること<br>
+                                        　※LP=ランディングページ
+                                    </div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯このゲームでの効果
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・CVRを変動させます<br>
+                                        ・CVRが低い時は上がりやすく、既に高い時は上がりにくくなります。<br>
+                                        ・アクションによって悪化することもあります<br>
+                                        ・実行すると考案費とデザイン費とコーディング費として、キャッシュを50万円消費します。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="layer js-modal" id="modalCPN">
+                    <div class="modal">
+                        <div class="modal__inner">
+                            <div class="modal__button-wrap">
+                                <button class="close-button js-close-button">
+                                    <span></span>
+                                    <span></span>
+                                </button>
+                            </div>
+                            <div class="modal__contents">
+                                <div class="modal__content">
+                                    <div class="actionBtnDescription">CPN変更</div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯言葉の意味
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・キャンペーン変更の略称で、ターゲティングや配信構造を変更することを指します。
+                                    </div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯このゲームでの効果
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・このゲームではCPMを変動させます。キャッシュは消費されません。<br>
+                                        ・CPMが高い時は下がりやすく、既に低い時は下がりにくくなります。<br>
+                                    </div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯現実での効果
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・実際には配信されるユーザーが変わるため、CTRもCVRもCPMも変動します。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="layer js-modal" id="modalIncrease">
+                    <div class="modal">
+                        <div class="modal__inner">
+                            <div class="modal__button-wrap">
+                                <button class="close-button js-close-button">
+                                    <span></span>
+                                    <span></span>
+                                </button>
+                            </div>
+                            <div class="modal__contents">
+                                <div class="modal__content">
+                                    <div class="actionBtnDescription">予算増額</div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯言葉の意味
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・広告費を増額させることを示します
+                                    </div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯このゲームでの効果
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・CPAが2万円以下の場合、COSTを20%増額させられます。CPAが1CVあたりの利益以内の場合、上司からGOが出るイメージです<br>
+                                        ・広告費を増やしすぎると学習が崩れるため、増額できるのは20%ずつです<br>
+                                        ・実際には20%以内の変動だと大きな悪化はないとされていますが、このゲームではゲーム性を高めるためにCTR、CVR、CPM全てがランダムで悪化します。
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="layer js-modal" id="modalExecution">
+                    <div class="modal">
+                        <div class="modal__inner">
+                            <div class="modal__button-wrap">
+                                <button class="close-button js-close-button">
+                                    <span></span>
+                                    <span></span>
+                                </button>
+                            </div>
+                            <div class="modal__contents">
+                                <div class="modal__content">
+                                    <div class="actionBtnDescription">実行する</div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯言葉の意味
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・選択されたボタンを実行し、翌週の結果を出力します。<br>
+                                        ・複数のアクションを実行できます。
+                                    </div>
+                                    <div class="actionDescriptionTitle">
+                                        ◯このゲームでの効果
+                                    </div>
+                                    <div class="actionDescriptionText">
+                                        ・何も選択していない場合は全ての値が少しずつ良くなります。これは媒体の学習による効果改善を表しています<br>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="setteingContainer">
+            <div class="caseTable">
+                <table class="tCpaTable">
+                    <tr>
+                        <td>商材</td>
+                        <td>ITスクール</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="turnTableContainer">
+                <table class="turnTable">
+                    <tr>
+                        <td>残りターン数</td>
+                        <td id="turnCount">25</td>
+                    </tr>
+                </table>
+            </div>
+            <!-- <div class="caseChooseBtn">
+                <select name="case" id="caseSelect">
+                    <option value="default" disabled selected style="display:none;">案件を選ぶ</option>
+                    <option value="beauty">美容商材</option>
+                    <option value="saas">SaaS商材</option>
+                </select>
+            </div> -->
+        </div>
+        <div class="statusContainer">
+            <table class="tCpaTable">
+                <tr>
+                    <td>1CVあたりの利益</td>
+                    <td id="tCpa">¥20,000</td>
+                </tr>
+            </table>
+            <table class="cashTable">
+                <tr>
+                    <td>キャッシュ</td>
+                    <td id="cashValue">¥50,000,000</td>
+                </tr>
+            </table>
+        </div>
+        <h2 >配信結果表（週次）</h2>
+        <p>列名をタップすると用語解説が立ち上がります</p>
+        <div class="adResultContainer">
+            <div class="adResultTableContainer">
+                <table>
+                    <tbody class="adResultTable">
+                        <tr class="adResultTableItmes">
+                            <td class="description-trigger" data-description="期間">期間</td>
+                            <td class="description-trigger" data-description="COST">COST</td>
+                            <td class="description-trigger" data-description="CPM">CPM</td>
+                            <td class="description-trigger" data-description="IMP">IMP</td>
+                            <td class="description-trigger" data-description="CTR">CTR</td>
+                            <td class="description-trigger" data-description="CVR">CVR</td>
+                            <td class="description-trigger" data-description="CV">CV</td>
+                            <td class="description-trigger" data-description="CPA">CPA</td>
+                        </tr>
+                        <tr class="adResultValue wk1">
+                            <td>wk1</td>
+                            <td class="costValue">¥5,000,000</td>
+                            <td class="cpmValue">¥5,000</td>
+                            <td class="impValue">1,000,000</td>
+                            <td class="ctrValue">0.32%</td>
+                            <td class="cvrValue">2.25%</td>
+                            <td class="cvValue">72CV</td>
+                            <td class="cpaValue">¥69,444</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="actionContainer">
+            <div class="actionBtnList">
+                <ul>
+                    <li id="CRBtn">CR変更</li>
+                    <li id="LPBtn">LP変更</li>
+                    <li id="CPNBtn">CPN変更</li>
+                    <li id="increaseBtn">予算増額</li>
+                </ul>
+            </div>
+        </div>
+        <div class="executionConcainer">
+            <button type="button" class="executionBtn">
+                実行する
+            </button>
+        </div>
+        <div class="contactConcainer">
+            <a href="https://www.instagram.com/shunsuke108m/" target="_blank">品質向上のご意見やご感想、雑談やマーケ相談はこちらにDMいただきたいです</a>
+        </div> 
+        <div class="layer js-modal" id="modalGameResult">
+            <div class="modal">
+                <div class="modal__inner">
+                    <div class="modal__button-wrap">
+                        <button class="close-button js-close-button">
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                    <div class="modal__contents">
+                        <div class="modal__content">
+                            <div class="actionDescriptionTitle">
+                                ◯ゲーム終了
+                            </div>
+                            <div class="actionDescriptionText">
+                                全てのターンが終了しました。お疲れ様でした。
+                            </div>
+                            <div class="resultTable">
+                                <table>
+                                    <tr>
+                                        <td>最終COST</td>
+                                        <td id="finalCost"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>最終CV数</td>
+                                        <td id="finalCv"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>最終キャッシュ</td>
+                                        <td id="finalCashValue"></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="actionDescriptionText">
+                                <b>スコアはスクショで保存してください。</b>
+                            </div>
+                            <div class="actionDescriptionText">
+                                以下を押すと画面をリロードしてリトライできます。
+                            </div>
+                            <button class="retryBtn">リトライ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layer js-modal" id="modalGameOver">
+            <div class="modal">
+                <div class="modal__inner">
+                    <div class="modal__button-wrap">
+                        <button class="close-button js-close-button">
+                            <span></span>
+                            <span></span>
+                        </button>
+                    </div>
+                    <div class="modal__contents">
+                        <div class="modal__content">
+                            <div class="gameOverTitle">
+                                ゲームオーバー
+                            </div>
+                            <div class="gameOverText">
+                                キャッシュが底をつきました。<br>
+                                まずは効果改善を優先させましょう
+                            </div>
+                            <!-- <div class="resultTable">
+                                <table>
+                                    <tr>
+                                        <td>最終COST</td>
+                                        <td id="finalCostGameOver"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>最終CV数</td>
+                                        <td id="finalCvGameOver"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>最終キャッシュ</td>
+                                        <td id="finalCashValueGameOver"></td>
+                                    </tr>
+                                </table>
+                            </div> -->
+                            <div class="gameOverText">
+                                以下を押すと画面をリロードしてリトライできます。
+                            </div>
+                            <button class="retryBtn">リトライ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </main>
+    <script src="/main.js"></script>
+</body>
+</html>

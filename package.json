@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "tailwindcss": "^3.4.3"
+  },
+  "name": "your-project",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npm run dev"
+  }
+}

@@ -636,6 +636,18 @@ function openGameResultModal() {
     openModal('modalGameResult');
 }
 
+// function openGameOverModal() {
+//     let finalCost = document.querySelector('.adResultTable tr:nth-child(2) .costValue').innerText;
+//     let finalCv = document.querySelector('.adResultTable tr:nth-child(2) .cvValue').innerText;
+//     let finalCashValue = document.getElementById('cashValue').innerText;
+
+//     document.getElementById('finalCostGameOver').innerText = finalCost;
+//     document.getElementById('finalCvGameOver').innerText = finalCv;
+//     document.getElementById('finalCashValueGameOver').innerText = finalCashValue;
+
+//     openModal('modalGameOver');
+// }
+
 function openModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
@@ -743,8 +755,13 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(target, config);
 });
 
+// リトライボタン
+document.querySelectorAll('.retryBtn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        location.reload(); // ページをリロードする
+    });
+});
 
-    
 
 // function updateResultTable() {
 //     let newRow = document.createElement('tr');
