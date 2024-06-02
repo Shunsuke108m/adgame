@@ -1,0 +1,564 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+main {
+    width: 360px;
+    background-color: #DAF4FF;
+    padding-bottom: 32px;
+    position: relative;
+}
+
+/* タイトル */
+
+h1 {
+    white-space: nowrap;
+    margin-left: 12px;
+}
+
+.gameOverview {
+    margin-left: 12px;
+}
+
+h2 {
+    margin-left: 12px;
+    font-size: 16px;
+}
+
+.gameDiscription {
+    margin-left: 12px;
+}
+
+p {
+    font-size: 12px;
+    margin-left: 12px;
+}
+
+
+/* #visionButton {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+} */
+
+/* アコーディオン系 */
+.accordion {
+    cursor: pointer;
+    text-align: left;
+    border: none;
+    outline: none;
+    transition: background-color 0.4s ease;
+}
+
+.active, .accordion:hover {
+    background-color: #ccc;
+}
+
+.panel {
+    background-color: #DAF4FF;
+    font-size: 12px;
+    max-height: 0;
+    max-width: 360px;
+    margin-top: 0px;
+    margin-right: 12px;
+    margin-bottom: 0px;
+    margin-left: 12px;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+}
+
+/* 用語解説 */
+.wordDescriptionText {
+    margin: 8px 0px;
+}
+
+.adResultContainerDescription {
+    width: 336px;
+    background-color: #ffffff;
+    margin-bottom: 24px;
+    height: 36px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.adResultTableContainerDescription {
+    width: 336px;
+    table-layout: fixed;
+    position: relative; /* 追加 */
+    max-height: 36px; /* 表示する最大の高さを設定、元の高さよりも小さくする */
+    overflow-y: auto; /* 垂直方向のスクロールを有効にする */
+}
+
+.adResultTableContainerDescription td:nth-child(1) {
+    width: 36px;
+}
+
+.adResultTableContainerDescription td:nth-child(2) {
+    width: 48px;
+}
+
+.adResultTableContainerDescription td:nth-child(n+3) {
+    width: 42px;
+}
+
+.adResultTableContainerDescription tr.adResultTableItmesDescription {
+    background-color: rgb(180, 198, 255);
+    position: sticky; /* 追加 */
+    top: 0; /* 追加 */
+    z-index: 1; /* 追加 */
+}
+
+.adResultValueDescription {
+    font-size: 9px;
+}
+
+/* アクションボタンの説明 */
+.actionDescriptionText {
+    margin: 8px 0px;
+}
+
+.actionContainerDescription {
+    max-width: 360px;
+}
+
+.actionBtnListDescription ul {
+    max-width: 360px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.actionBtnListDescription li {
+    box-sizing: border-box;
+    list-style: none;
+    display: inline-block;
+    margin: 4px 1px;
+    margin-top: 0px;
+    font-size: 16px;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    width: 74px;
+    padding: 2px;
+    font-weight: medium;
+    border: 1px solid #000000;
+    color: #000000;
+    background-color: #FFFFFF;
+    border-radius: 5px; 
+}
+
+.actionBtnListDescription li button {
+    width: 100%;
+    height: 100%;
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+}
+
+.actionBtnListDescription li:hover {
+    cursor: pointer;
+}
+
+.executionConcainerDescription {
+    width: 336px;
+    margin: 4px auto;
+}
+
+.executionBtnDescription {
+    width: 320px;
+    height: 48px;
+    margin: 4px 0;
+    background-color: #FFFFFF;
+    border-radius: 5px; 
+    font-size: 16px;
+    border: 1px solid #000000;
+    color: #000000;
+    cursor: pointer;
+}
+
+/* モーダル内のボタン */
+.actionBtnDescription {
+    box-sizing: border-box;
+    list-style: none;
+    display: inline-block;
+    margin: auto;
+    margin-top: 4px;
+    font-size: 16px;
+	text-align: center;
+	vertical-align: middle;
+	text-decoration: none;
+	width: 78px;
+    padding: 2px;
+	font-weight: medium;
+	border: 1px solid #000000;
+	color: #000000;
+    background-color: #FFFFFF;
+    border-radius: 5px; 
+}
+
+.actionDescriptionTitle {
+    font-size: 16px;
+    margin-top: 12px;
+}
+
+.actionDescriptionText {
+    font-size: 12px;
+}
+
+
+/* モーダル */
+.layer {
+    background: rgba(0, 0, 0, .2);
+    width: 375px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.layer.is-open {
+    z-index: 999;
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal__button-wrap {
+    position: absolute;
+    right: 10px;
+    top: -28px;
+    display: inline-flex;
+}
+
+.close-button {
+    position: relative;
+    width: 39px;
+    height: 39px;
+    background: orange;
+    border-radius: 50%;
+    padding: 0;
+    border: transparent;
+    cursor: pointer;
+}
+
+.close-button span {
+    width: 25px;
+    height: 2px;
+    background: #fff;
+    display: inline-block;
+    position: absolute;
+    left: calc(50% - 12px);
+    top: 50%;
+    border-radius: 20px;
+}
+
+.close-button span:nth-child(1) {
+    transform: rotate(45deg) translate(-1px, -1px);
+}
+
+.close-button span:nth-child(2) {
+    transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.modal {
+    position: relative;
+    margin-right: auto;
+    margin-left: auto;
+    width: 360px;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.layer.is-open .modal {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal__inner {
+    margin-top: 125px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    background: #fff;
+    box-shadow: 3px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 13px;
+    display: block;
+    padding: 21px 8px 21px;
+    height: auto;
+}
+
+.modal__content {
+    padding-top: 15px;
+    padding-bottom: 23px;
+    font-size: 12px;
+}
+
+.modal__button-area {
+    max-width: 360px;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 17px;
+    padding-top: 15px;
+}
+
+.button {
+    background: orange;
+    border-radius: 12px;
+    box-shadow: 2px 4px 6px 3px rgba(0, 0, 0, 0.24);
+    border: 1px solid orange;
+    font-size: 16px;
+    line-height: 1.6;
+    display: block;
+    padding: 12px 20px;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    margin: 0;
+}
+
+.contactConcainer {
+    margin: 36px;
+    text-align: center;
+}
+
+
+/* 設定ボタン */
+
+.setteingContainer {
+    width: 336px;
+    margin: 0px auto; 
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 右端に配置する */
+}
+
+.caseChooseBtn {
+    margin-right: auto; /* 左端に配置する */
+}
+
+.caseChooseBtn select {
+    height: 27px;
+}
+
+.descriptionBtn {
+    margin-left: auto; /* 右端に配置する */
+}
+
+
+
+/* ステータスバー */
+
+.statusContainer {
+    width: 336px;
+    margin: 4px auto; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+}
+
+
+.tCpaTable {
+    margin-right: auto;
+    border: 0.5px solid #000;
+    background-color: #FFFFFF;
+    font-size: 12px;
+}
+
+.tCpaTable td:first-child {
+    border-right: 0.5px solid #000;
+    background-color: #F1F1F1;
+    padding-right: 4px;
+}
+
+.turnTable {
+    margin-right: auto;
+    border: 0.5px solid #000;
+    background-color: #FFFFFF;
+    font-size: 12px;
+}
+
+.turnTable td:first-child {
+    border-right: 0.5px solid #000;
+    background-color: #F1F1F1;
+    padding-right: 4px;
+}
+
+.turnTable td:nth-child(2) {
+    font-size: 16px;
+}
+
+
+.cashTable {
+    margin-left: auto;
+    border: 0.5px solid #000;
+    background-color: #FFFFFF;
+    font-size: 12px;
+}
+
+.cashTable td:first-child {
+    border-right: 0.5px solid #000;
+    background-color: #F1F1F1;
+}
+
+/* 管理画面 */
+.adResultContainer {
+    width: 336px;
+    background-color: #ffffff;
+    margin: auto;
+    height: 216px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.adResultTableContainer {
+    width: 336px;
+    table-layout: fixed;
+    position: relative; /* 追加 */
+    max-height: 216px; /* 表示する最大の高さを設定、元の高さよりも小さくする */
+    overflow-y: auto; /* 垂直方向のスクロールを有効にする */
+}
+
+.adResultTableContainer td:nth-child(1) {
+    width: 36px;
+}
+
+.adResultTableContainer td:nth-child(2) {
+    width: 48px;
+}
+
+.adResultTableContainer td:nth-child(n+3) {
+    width: 42px;
+}
+
+.adResultTableContainer tr.adResultTableItmes {
+    background-color: rgb(180, 198, 255);
+    position: sticky; /* 追加 */
+    top: 0; /* 追加 */
+    z-index: 1; /* 追加 */
+}
+
+.adResultValue {
+    font-size: 9px;
+}
+
+/* 追加するCSS */
+thead, .adResultTableItmes {
+    background-color: #f1f1f1; /* ヘッダーの背景色、必要に応じて調整 */
+    position: sticky;
+    top: 0;
+    z-index: 1; /* ヘッダーを他の要素より前に表示 */
+}
+
+thead td {
+    
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+tbody td {
+    
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+
+/* アクションボタン */
+.actionContainer {
+    width: 336px;
+    margin: 4px auto;
+}
+
+.actionBtnList ul {
+    width: 336px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+.actionBtnList li {
+    box-sizing: border-box;
+    list-style: none;
+    display: inline-block;
+    margin: 4px 1px;
+    margin-top: 12px;
+    font-size: 16px;
+	text-align: center;
+	vertical-align: middle;
+	text-decoration: none;
+	width: 78px;
+    padding: 2px;
+	font-weight: medium;
+	border: 1px solid #000000;
+	color: #000000;
+    background-color: #FFFFFF;
+    border-radius: 5px; 
+}
+
+.actionBtnList li:hover {
+    cursor: pointer;
+}
+
+#CRBtn.on {
+    background-color: rgb(50, 139, 255);
+    color: #FFFFFF;
+}
+
+#CPNBtn.on {
+    background-color: rgb(50, 139, 255);
+    color: #FFFFFF;
+}
+
+#LPBtn.on {
+    background-color: rgb(50, 139, 255);
+    color: #FFFFFF;
+}
+
+#increaseBtn.on {
+    background-color: rgb(50, 139, 255);
+    color: #FFFFFF;
+}
+
+.executionConcainer {
+    width: 336px;
+    margin: 4px auto;
+}
+
+.executionBtn {
+    width: 336px;
+    height: 48px;
+    margin: 4px auto;
+    background-color: #FFFFFF;
+    border-radius: 5px; 
+    font-size: 16px;
+}
+/* 
+.retryConcainer {
+    width: 336px;
+    margin: 12px auto;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.retryBtn {
+    width: 78px;
+    height: 24px;
+    margin: 0 auto;
+    background-color: #FFFFFF;
+    border-radius: 5px; 
+    font-size: 12px;
+} */
+
+.bottomSpace {
+    position: absolute; /* 絶対位置指定 */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 32px; /* 高さを32pxに設定 */
+    background-color: #DAF4FF; /* 水色の背景を適用 */
+}
+
