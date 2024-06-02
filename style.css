@@ -37,11 +37,11 @@ p {
 }
 
 
-/* #visionButton {
+#visionButton {
     position: absolute;
     top: 12px;
     right: 12px;
-} */
+}
 
 /* アコーディオン系 */
 .accordion {

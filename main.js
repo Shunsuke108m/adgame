@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalBtns = document.querySelectorAll('.js-close-button');
     const actionButtons = document.querySelectorAll('.actionBtnListDescription button');
     const executionBtn = document.querySelector('.executionBtnDescription');
+    const visionBtn = document.getElementById('visionButton');
     const modals = document.querySelectorAll('.js-modal');
     const descriptionTriggers = document.querySelectorAll('.description-trigger');
 
@@ -136,7 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Visionボタンでモーダルを開く
+    visionBtn.addEventListener('click', () => {
+        openModal('modalVision');
+    });
 });
+
 
 
 
@@ -505,18 +512,44 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
     }
 
     updateWeekValue();
-    
-    if (document.getElementById('CRBtn').classList.contains('on')) {
-        changeCR();
-    }
-    if (document.getElementById('LPBtn').classList.contains('on')) {
-        changeLP();
-    }
-    if (document.getElementById('CPNBtn').classList.contains('on')) {
-        changeCP();
-    }
-    if (document.getElementById('increaseBtn').classList.contains('on')) {
-        changeCost();
+
+    // CR変更、LP変更、CPN変更、予算増額のいずれも選択されていない場合
+    if (!document.getElementById('CRBtn').classList.contains('on') &&
+        !document.getElementById('LPBtn').classList.contains('on') &&
+        !document.getElementById('CPNBtn').classList.contains('on') &&
+        !document.getElementById('increaseBtn').classList.contains('on')) {
+
+        // CTR、CVR、CPMを0%から20%の範囲でランダムに改善させる
+        currentCtrValue = parseFloat(document.querySelector('.adResultTable tr:nth-child(2) .ctrValue').innerText.replace('%', ''));
+        currentCvrValue = parseFloat(document.querySelector('.adResultTable tr:nth-child(2) .cvrValue').innerText.replace('%', ''));
+        currentCpmValue = parseFloat(document.querySelector('.adResultTable tr:nth-child(2) .cpmValue').innerText.replace(/¥|,/g, ''));
+
+        let ctrImprovement = (Math.random() * 0.05) + 1.0; // 1.0 から 1.2 の範囲
+        let cvrImprovement = (Math.random() * 0.05) + 1.0; // 1.0 から 1.2 の範囲
+        let cpmImprovement = (Math.random() * 0.05) + 0.95; // 0.8 から 1.0 の範囲
+
+        newCtrValue = currentCtrValue * ctrImprovement;
+        newCvrValue = currentCvrValue * cvrImprovement;
+        newCpmValue = currentCpmValue * cpmImprovement;
+
+        newCtr = newCtrValue.toFixed(2) + '%';
+        newCvr = newCvrValue.toFixed(2) + '%';
+        newCpm = '¥' + Math.round(newCpmValue);
+
+        console.log('CTR, CVR, CPM improved by random percentage up to 20%');
+    } else {
+        if (document.getElementById('CRBtn').classList.contains('on')) {
+            changeCR();
+        }
+        if (document.getElementById('LPBtn').classList.contains('on')) {
+            changeLP();
+        }
+        if (document.getElementById('CPNBtn').classList.contains('on')) {
+            changeCP();
+        }
+        if (document.getElementById('increaseBtn').classList.contains('on')) {
+            changeCost();
+        }
     }
 
     currentCostValue = parseFloat(document.querySelector('.adResultTable tr:nth-child(2) .costValue').innerText.replace(/[¥,]/g, ''));
@@ -553,43 +586,6 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
     }
 });
 
-function openGameResultModal() {
-    // テーブルの2行目のCOSTとCVを取得してモーダルに表示する
-    let finalCost = document.querySelector('.adResultTable tr:nth-child(2) .costValue').innerText;
-    let finalCv = document.querySelector('.adResultTable tr:nth-child(2) .cvValue').innerText;
-    let finalCashValue = document.getElementById('cashValue').innerText;
-
-    document.getElementById('finalCost').innerText = finalCost;
-    document.getElementById('finalCv').innerText = finalCv;
-    document.getElementById('finalCashValue').innerText = finalCashValue;
-
-    openModal('modalGameResult');
-}
-
-function openModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.add('is-open');
-    }
-}
-
-function closeModal() {
-    const modals = document.querySelectorAll('.js-modal');
-    modals.forEach(modal => modal.classList.remove('is-open'));
-}
-
-document.querySelectorAll('.js-close-button').forEach(btn => {
-    btn.addEventListener('click', closeModal);
-});
-
-// モーダルの外側をクリックした時にモーダルを閉じる
-document.querySelectorAll('.js-modal').forEach(modal => {
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
-});
 
 
 
