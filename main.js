@@ -205,28 +205,28 @@ function actionButton() {
 
 
 // 実行ボタンを押されるとボタンをONではなくして次のターンにする
-document.querySelector('.executionBtn').addEventListener('click', function() {
-    if (cpnClickCount % 2 !== 0) {
-        changeCP();
-        document.getElementById('CPNBtn').classList.remove('on');
-        cpnClickCount = 0;
-    }
-    if (crClickCount % 2 !== 0) {
-        changeCR();
-        document.getElementById('CRBtn').classList.remove('on');
-        crClickCount = 0;
-    }
-    if (lpClickCount % 2 !== 0) {
-        changeLP();
-        document.getElementById('LPBtn').classList.remove('on');
-        lpClickCount = 0;
-    }
-    if (increaseClickCount % 2 !== 0) {
-        changeCost();
-        document.getElementById('increaseBtn').classList.remove('on');
-        increaseClickCount = 0;
-    }
-});
+// document.querySelector('.executionBtn').addEventListener('click', function() {
+//     if (cpnClickCount % 2 !== 0) {
+//         changeCP();
+//         document.getElementById('CPNBtn').classList.remove('on');
+//         cpnClickCount = 0;
+//     }
+//     if (crClickCount % 2 !== 0) {
+//         changeCR();
+//         document.getElementById('CRBtn').classList.remove('on');
+//         crClickCount = 0;
+//     }
+//     if (lpClickCount % 2 !== 0) {
+//         changeLP();
+//         document.getElementById('LPBtn').classList.remove('on');
+//         lpClickCount = 0;
+//     }
+//     if (increaseClickCount % 2 !== 0) {
+//         changeCost();
+//         document.getElementById('increaseBtn').classList.remove('on');
+//         increaseClickCount = 0;
+//     }
+// });
 
 
 
@@ -519,14 +519,22 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
         !document.getElementById('CPNBtn').classList.contains('on') &&
         !document.getElementById('increaseBtn').classList.contains('on')) {
 
+        console.log(!document.getElementById('CRBtn').classList.contains('on'));
+        console.log(!document.getElementById('LPBtn').classList.contains('on'));
+        console.log(!document.getElementById('CPNBtn').classList.contains('on'));
+        console.log(!document.getElementById('increaseBtn').classList.contains('on'));
+        console.log(document.getElementById('CPNBtn'));
+        
+        
+
         // CTR、CVR、CPMを0%から20%の範囲でランダムに改善させる
         currentCtrValue = parseFloat(document.querySelector('.adResultTable tr:nth-child(2) .ctrValue').innerText.replace('%', ''));
         currentCvrValue = parseFloat(document.querySelector('.adResultTable tr:nth-child(2) .cvrValue').innerText.replace('%', ''));
         currentCpmValue = parseFloat(document.querySelector('.adResultTable tr:nth-child(2) .cpmValue').innerText.replace(/¥|,/g, ''));
 
-        let ctrImprovement = (Math.random() * 0.05) + 1.0; // 1.0 から 1.2 の範囲
-        let cvrImprovement = (Math.random() * 0.05) + 1.0; // 1.0 から 1.2 の範囲
-        let cpmImprovement = (Math.random() * 0.05) + 0.95; // 0.8 から 1.0 の範囲
+        let ctrImprovement = (Math.random() * 0.05) + 1.0; // 1.0 から 1.05 の範囲
+        let cvrImprovement = (Math.random() * 0.05) + 1.0; // 1.0 から 1.05 の範囲
+        let cpmImprovement = (Math.random() * 0.05) + 0.95; // 0.95 から 1.0 の範囲
 
         newCtrValue = currentCtrValue * ctrImprovement;
         newCvrValue = currentCvrValue * cvrImprovement;
@@ -539,15 +547,19 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
         console.log('CTR, CVR, CPM improved by random percentage up to 20%');
     } else {
         if (document.getElementById('CRBtn').classList.contains('on')) {
+            console.log('changeCR is called');
             changeCR();
         }
         if (document.getElementById('LPBtn').classList.contains('on')) {
+            console.log('changeLP is called');
             changeLP();
         }
         if (document.getElementById('CPNBtn').classList.contains('on')) {
+            console.log('changeCP is called');
             changeCP();
         }
         if (document.getElementById('increaseBtn').classList.contains('on')) {
+            console.log('changeCost is called');
             changeCost();
         }
     }
@@ -584,11 +596,70 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
     if (turnCount === 0) {
         openGameResultModal();
     }
+   
+    // 実行ボタンを押されるとonになってたやつを消す
+    if (cpnClickCount % 2 !== 0) {
+        changeCP();
+        document.getElementById('CPNBtn').classList.remove('on');
+        cpnClickCount = 0;
+    }
+    if (crClickCount % 2 !== 0) {
+        changeCR();
+        document.getElementById('CRBtn').classList.remove('on');
+        crClickCount = 0;
+    }
+    if (lpClickCount % 2 !== 0) {
+        changeLP();
+        document.getElementById('LPBtn').classList.remove('on');
+        lpClickCount = 0;
+    }
+    if (increaseClickCount % 2 !== 0) {
+        changeCost();
+        document.getElementById('increaseBtn').classList.remove('on');
+        increaseClickCount = 0;
+    }
 });
 
 
 
 
+function openGameResultModal() {
+    // テーブルの2行目のCOSTとCVを取得してモーダルに表示する
+    let finalCost = document.querySelector('.adResultTable tr:nth-child(2) .costValue').innerText;
+    let finalCv = document.querySelector('.adResultTable tr:nth-child(2) .cvValue').innerText;
+    let finalCashValue = document.getElementById('cashValue').innerText;
+
+    document.getElementById('finalCost').innerText = finalCost;
+    document.getElementById('finalCv').innerText = finalCv;
+    document.getElementById('finalCashValue').innerText = finalCashValue;
+
+    openModal('modalGameResult');
+}
+
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (modal) {
+        modal.classList.add('is-open');
+    }
+}
+
+function closeModal() {
+    const modals = document.querySelectorAll('.js-modal');
+    modals.forEach(modal => modal.classList.remove('is-open'));
+}
+
+document.querySelectorAll('.js-close-button').forEach(btn => {
+    btn.addEventListener('click', closeModal);
+});
+
+// モーダルの外側をクリックした時にモーダルを閉じる
+document.querySelectorAll('.js-modal').forEach(modal => {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+});
 
 
 
