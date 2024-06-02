@@ -551,10 +551,22 @@ tbody td {
 .gameOverText {
     margin: 12px auto;
 }
+
+.retryBtnConcainer {
+    width: 336px;
+    margin: 4px auto;
+    text-align: center;
+    margin-top: 36px;
+}
+
+.retryBtnContainer .retryBtn{
+    margin: 16px 16px;
+}
+
 .retryBtn {
-    width: 320px;
+    width: 336px;
     height: 48px;
-    margin: 4px 0;
+    margin: 16px auto;
     background-color: #FFFFFF;
     border-radius: 5px; 
     font-size: 16px;
