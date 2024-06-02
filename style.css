@@ -535,6 +535,8 @@ tbody td {
     background-color: #FFFFFF;
     border-radius: 5px; 
     font-size: 16px;
+    border: 1px solid #000000;
+    color: #000000;
 }
 
 /* .retryConcainer {
@@ -560,7 +562,9 @@ tbody td {
 }
 
 .retryBtnContainer .retryBtn{
-    margin: 16px 16px;
+    margin: 16px 14px;
+    border: 0.5px solid #000000;
+    color: gray;
 }
 
 .retryBtn {
