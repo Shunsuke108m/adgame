@@ -511,6 +511,12 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
         return;
     }
 
+    // キャッシュがゼロ以下の場合、ゲームオーバーモーダルを立ち上げる
+    if (currentCashValue <= 0) {
+        openModal('modalGameOver');
+        return;
+    }
+
     updateWeekValue();
 
     // CR変更、LP変更、CPN変更、予算増額のいずれも選択されていない場合
@@ -573,6 +579,7 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
     currentCashValue += cashChange;
     console.log('最終的なCashValue', currentCashValue);
     console.log('計算後のCashChange', cashChange);
+    cashChange = 0;
 
     updateResultTable();
 
@@ -586,11 +593,6 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
         turnCountElement.innerText = turnCount;
     }
 
-    // キャッシュがゼロ以下の場合、ゲームオーバーモーダルを立ち上げる
-    if (currentCashValue <= 0) {
-        openModal('modalGameOver');
-        return;
-    }
 
     // 残りターン数が0になったらmodalGameResultモーダルを立ち上げる
     if (turnCount === 0) {
@@ -598,26 +600,24 @@ document.querySelector('.executionBtn').addEventListener('click', function() {
     }
    
     // 実行ボタンを押されるとonになってたやつを消す
+    // changeCRとかが「学習」と重複してたから消した
     if (cpnClickCount % 2 !== 0) {
-        changeCP();
         document.getElementById('CPNBtn').classList.remove('on');
         cpnClickCount = 0;
     }
     if (crClickCount % 2 !== 0) {
-        changeCR();
         document.getElementById('CRBtn').classList.remove('on');
         crClickCount = 0;
     }
     if (lpClickCount % 2 !== 0) {
-        changeLP();
         document.getElementById('LPBtn').classList.remove('on');
         lpClickCount = 0;
     }
     if (increaseClickCount % 2 !== 0) {
-        changeCost();
         document.getElementById('increaseBtn').classList.remove('on');
         increaseClickCount = 0;
     }
+
 });
 
 
