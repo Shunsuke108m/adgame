@@ -88,7 +88,7 @@ export const GamePage: React.FC = () => {
     
   return (
     <Root>
-      <Title>広告運用ゲーム</Title>
+      <Title>CV数を増やせ！広告運用ゲーム</Title>
       <Modal />
       <GameDescriptions />
       <GameTable rows={rows} />
@@ -108,4 +108,6 @@ const Root = styled.div`
 
 const Title = styled.h1`
   margin: 0;
+  line-height: 1;
+  margin-bottom: 4px;
 `
