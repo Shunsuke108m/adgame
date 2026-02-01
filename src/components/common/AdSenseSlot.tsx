@@ -13,7 +13,7 @@ export type AdSenseSlotProps = {
   className?: string;
   /** true にすると広告枠が画面上部にスティッキー（スクロール時も常に表示） */
   sticky?: boolean;
-  /** true にすると 250x250 の正方形枠で表示（発行したユニットが正方形の場合に指定） */
+  /** true にすると 250x250 の正方形枠で表示（AdSense で固定サイズユニットを発行している場合に指定） */
   square?: boolean;
 };
 
@@ -25,7 +25,10 @@ declare global {
 
 /**
  * Google AdSense の広告スロットを表示する。
- * index.html で adsbygoogle.js を読み込んでいる前提。
+ * index.html の head で adsbygoogle.js を読み込んでいる前提。
+ *
+ * - 固定サイズ（square）: data-ad-format は使わず、CSS で width/height のみ指定（400 回避のため）。
+ * - push は requestAnimationFrame で 1 フレーム遅延し、ins が DOM に反映された後に実行する。
  */
 export const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
   slot,
@@ -34,13 +37,20 @@ export const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
   square = false,
 }) => {
   const insRef = useRef<HTMLModElement>(null);
+  const pushedRef = useRef(false);
 
   useEffect(() => {
-    try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch {
-      // AdSense がブロックされている場合など
-    }
+    pushedRef.current = false;
+    const id = requestAnimationFrame(() => {
+      try {
+        if (!insRef.current || pushedRef.current) return;
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        pushedRef.current = true;
+      } catch {
+        // AdSense がブロックされている場合など
+      }
+    });
+    return () => cancelAnimationFrame(id);
   }, [slot]);
 
   const insStyle: React.CSSProperties = square
@@ -55,13 +65,12 @@ export const AdSenseSlot: React.FC<AdSenseSlotProps> = ({
         style={insStyle}
         data-ad-client={AD_CLIENT}
         data-ad-slot={slot}
-        data-ad-format={square ? "rectangle" : "auto"}
         {...(square
-          ? {
-              "data-ad-width": String(SQUARE_AD_SIZE),
-              "data-ad-height": String(SQUARE_AD_SIZE),
-            }
-          : { "data-full-width-responsive": "true" })}
+          ? {}
+          : {
+              "data-ad-format": "auto",
+              "data-full-width-responsive": "true",
+            })}
       />
     </Wrapper>
   );

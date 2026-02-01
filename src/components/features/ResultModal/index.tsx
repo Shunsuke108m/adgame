@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { AdSenseSlot } from "~/components/common/AdSenseSlot";
+import { useProfile } from "~/components/features/Profile/hooks/useProfile";
 import { Colors } from "../../../styles/colors";
 import {
   useGameResultModalOpen,
@@ -25,8 +26,10 @@ export const ResultModal: React.FC<ResultModalProps> = ({
   const result = useGameResult();
   const user = useGameResultModalAuthUser();
   const { copyProfileUrl, copySuccess } = useCopyProfileUrl(user?.uid);
+  const { data: profile } = useProfile(user?.uid ?? undefined);
 
   const isLoggedIn = user !== null;
+  const hasProfile = profile != null;
 
   const onPlayAgain = useGamePlayAgain();
 
@@ -55,13 +58,15 @@ export const ResultModal: React.FC<ResultModalProps> = ({
           <>
             <CopyRow>
               <CopyButton type="button" onClick={copyProfileUrl}>
-                プロフィール共有URLをコピー
+                ベストスコアをURLで共有
               </CopyButton>
               {copySuccess && <Toast>コピーしました</Toast>}
             </CopyRow>
-            <ProfileEditLink to={`/profiles/${user.uid}/edit`}>
-              プロフィールを作成して共有しよう
-            </ProfileEditLink>
+            {!hasProfile && user && (
+              <ProfileEditLink to={`/profiles/${user.uid}/edit`}>
+                プロフィールを作成して共有しよう
+              </ProfileEditLink>
+            )}
           </>
         )}
 
