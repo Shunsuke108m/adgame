@@ -45,3 +45,16 @@ service cloud.firestore {
    `allow write: if request.auth != null && request.auth.uid == uid;` が `profiles/{uid}` に含まれているか確認してください（上記の例のままなら含まれています）。
 3. **ルールを公開したか**  
    ルールを編集したあと「公開」していないと反映されません。
+
+---
+
+## 画像削除・再アップロードで「保存に失敗しました」になる場合
+
+プロフィール編集で「画像を削除」して保存したあと、再度画像をアップロードして保存すると失敗することがあります。
+
+- **画像削除時**: `profiles/{uid}` の `photoURL` に `null` を書き込んでいます。
+- **再アップロード時**: 同じく `setDoc` の `merge: true` で `photoURL` を文字列で更新しています。
+
+どちらも同じ書き方（`setDoc` merge）にしているので、**Firestore ルールで `photoURL` を string 限定にしないでください**。  
+`allow write: if request.auth != null && request.auth.uid == uid;` のように「本人のみ書ける」だけにしておけば、`photoURL` に `null` を書くことも、あとから文字列を書くことも許可されます。  
+`request.resource.data.photoURL is string` のような型チェックを入れていると、画像削除（null）や再アップロードの書き込みが拒否されることがあります。

@@ -4,12 +4,14 @@ import styled from "styled-components";
 import { useAtomValue } from "jotai";
 import { authUserAtom, authReadyAtom } from "~/jotai/Auth/atoms";
 import { loginWithGoogle } from "~/components/features/AuthUser/authActions";
+import { useProfile } from "~/components/features/Profile/hooks/useProfile";
 import { Colors } from "~/styles/colors";
 import adgameLogo from "~/assets/adgame_logo.png";
 
 export const Header: React.FC = () => {
   const authReady = useAtomValue(authReadyAtom);
   const user = useAtomValue(authUserAtom);
+  const { data: profile } = useProfile(user?.uid ?? undefined);
 
   if (!authReady) {
     return null;
@@ -28,7 +30,11 @@ export const Header: React.FC = () => {
           </LoginButton>
         ) : (
           <ProfileLink to={`/profiles/${user.uid}`} aria-label="自分のプロフィールへ">
-            <ProfileIcon aria-hidden>👤</ProfileIcon>
+            {profile?.photoURL ? (
+              <HeaderAvatar src={profile.photoURL} alt="" />
+            ) : (
+              <ProfileIcon aria-hidden>👤</ProfileIcon>
+            )}
           </ProfileLink>
         )}
       </RightBlock>
@@ -97,6 +103,14 @@ const ProfileLink = styled(Link)`
   &:hover {
     opacity: 0.85;
   }
+`;
+
+const HeaderAvatar = styled.img`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
 `;
 
 const ProfileIcon = styled.span`

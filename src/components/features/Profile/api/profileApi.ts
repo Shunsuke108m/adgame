@@ -90,6 +90,8 @@ export async function updatePhotoURL(
 
 /**
  * profiles/{uid} の photoURL を削除（プロフィール編集で画像を外すとき）。
+ * setDoc merge で photoURL: null を書き、削除・再アップロードを同じ書き方に統一する。
+ * Firestore ルールで photoURL を string 限定にしないこと（null を許容すること）。
  */
 export async function clearPhotoURL(uid: string): Promise<void> {
   const ref = doc(db, "profiles", uid);

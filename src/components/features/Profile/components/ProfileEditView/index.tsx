@@ -1,6 +1,7 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useQueryClient } from "@tanstack/react-query";
 import { loginWithGoogle } from "~/components/features/AuthUser/authActions";
 import { useAuthUser } from "~/components/features/AuthUser/hooks/useAuthUser";
 import { useProfile } from "~/components/features/Profile/hooks/useProfile";
@@ -15,7 +16,14 @@ export type ProfileEditViewProps = {
   uid: string | undefined;
 };
 
+/**
+ * 保存すべきか・何を保存するかはここで1本にまとめる。
+ * 画像削除・画像アップロード・テキスト変更を同じ導線で扱い、バグりにくくする。
+ */
 export const ProfileEditView: React.FC<ProfileEditViewProps> = ({ uid }) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const [saveError, setSaveError] = useState(false);
   const { user, authReady, isMine } = useAuthUser();
   const { data: profile, isLoading: profileLoading } = useProfile(uid);
   const form = useProfileForm(uid, profile, profileLoading);
@@ -23,23 +31,40 @@ export const ProfileEditView: React.FC<ProfileEditViewProps> = ({ uid }) => {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (avatar.selectedFile && uid) {
-      try {
-        await avatar.uploadImage.mutateAsync(avatar.selectedFile);
-        avatar.clearSelection();
-      } catch {
-        return;
-      }
+    if (!uid) return;
+
+    setSaveError(false);
+    const formResult = form.validateAndGetSubmitResult();
+    if (!formResult) return;
+    if (!formResult.valid) return;
+
+    const hasImageRemove = avatar.removePhoto;
+    const hasImageUpload = avatar.selectedFile != null;
+    const hasFormChange = !formResult.sameAsProfile;
+    const hasAnythingToSave = hasImageRemove || hasImageUpload || hasFormChange;
+
+    if (!hasAnythingToSave) {
+      navigate(`/profiles/${uid}`, { replace: true });
+      return;
     }
-    if (avatar.removePhoto && uid) {
-      try {
+
+    try {
+      if (hasImageRemove) {
         await clearPhotoURL(uid);
+        void queryClient.invalidateQueries({ queryKey: ["profile", uid] });
         avatar.clearRemovePhoto();
-      } catch {
-        return;
       }
+      if (hasImageUpload) {
+        await avatar.uploadImage.mutateAsync(avatar.selectedFile!);
+        avatar.clearSelection();
+      }
+      if (hasFormChange) {
+        await form.upsert.mutateAsync(formResult.payload);
+      }
+      navigate(`/profiles/${uid}`, { state: { profileSaved: true }, replace: true });
+    } catch {
+      setSaveError(true);
     }
-    form.handleSubmit(e);
   };
 
   if (!uid) {
@@ -97,7 +122,7 @@ export const ProfileEditView: React.FC<ProfileEditViewProps> = ({ uid }) => {
             onSnsUrlChange={form.setSnsUrl}
             onSnsUrlBlur={form.handleSnsUrlBlur}
             errors={form.errors}
-            upsertError={form.upsert.isError}
+            upsertError={form.upsert.isError || saveError}
           />
           <SubmitButton
             type="submit"

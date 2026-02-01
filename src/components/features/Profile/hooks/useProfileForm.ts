@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import type { ProfileData } from "~/components/features/Profile/api/profileApi";
+import type {
+  ProfileData,
+  ProfileWriteData,
+} from "~/components/features/Profile/api/profileApi";
 import {
   trim,
   validateNickname,
@@ -13,6 +15,13 @@ export type ProfileFormErrors = {
   nickname: string | null;
   bio: string | null;
   snsUrl: string | null;
+};
+
+/** フォーム送信時の検証結果。親で「何を保存するか」を決めるために使う */
+export type ProfileFormSubmitResult = {
+  valid: boolean;
+  sameAsProfile: boolean;
+  payload: ProfileWriteData;
 };
 
 export function useProfileForm(
@@ -29,7 +38,6 @@ export function useProfileForm(
     snsUrl: null,
   });
 
-  const navigate = useNavigate();
   const upsert = useUpsertProfile(uid ?? "");
 
   useEffect(() => {
@@ -61,38 +69,37 @@ export function useProfileForm(
     setErrors((e) => ({ ...e, snsUrl: validateSnsUrl(snsUrl) }));
   }, [snsUrl]);
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!uid || !canSave) return;
-      const errNick = validateNickname(nickname);
-      const errBio = validateBio(bio);
-      const errSns = validateSnsUrl(snsUrl);
-      setErrors({ nickname: errNick, bio: errBio, snsUrl: errSns });
-      if (errNick || errBio || errSns) return;
-      const nextNick = trim(nickname);
-      const nextBio = trim(bio);
-      const nextSns = trim(snsUrl);
-      const prevBio = (profile?.bio ?? "").trim();
-      const prevSns = (profile?.snsUrl ?? "").trim();
-      const sameAsProfile =
-        profile != null &&
-        nextNick === (profile.nickname ?? "").trim() &&
-        nextBio === prevBio &&
-        nextSns === prevSns;
-      if (sameAsProfile) {
-        navigate(`/profiles/${uid}`, { replace: true });
-        return;
-      }
-      // 空で保存する場合も API で上書きするため、bio/snsUrl は常に文字列で渡す（"" でクリア）
-      upsert.mutate({
-        nickname: nextNick,
-        bio: nextBio,
-        snsUrl: nextSns,
-      });
-    },
-    [uid, canSave, nickname, bio, snsUrl, profile, upsert, navigate]
-  );
+  /**
+   * フォームを検証し、結果を返す。保存・遷移は呼び出し元（親）で行う。
+   * uid があるときは必ず検証して結果を返す（null にしない）。画像変更とテキスト変更を同じフローで扱う。
+   */
+  const validateAndGetSubmitResult = useCallback((): ProfileFormSubmitResult | null => {
+    if (!uid) return null;
+    const errNick = validateNickname(nickname);
+    const errBio = validateBio(bio);
+    const errSns = validateSnsUrl(snsUrl);
+    setErrors({ nickname: errNick, bio: errBio, snsUrl: errSns });
+    const nextNick = trim(nickname);
+    const nextBio = trim(bio);
+    const nextSns = trim(snsUrl);
+    const payload: ProfileWriteData = { nickname: nextNick, bio: nextBio, snsUrl: nextSns };
+    const hasValidationErrors = errNick != null || errBio != null || errSns != null;
+    if (hasValidationErrors) {
+      return { valid: false, sameAsProfile: false, payload };
+    }
+    const prevBio = (profile?.bio ?? "").trim();
+    const prevSns = (profile?.snsUrl ?? "").trim();
+    const sameAsProfile =
+      profile != null &&
+      nextNick === (profile.nickname ?? "").trim() &&
+      nextBio === prevBio &&
+      nextSns === prevSns;
+    return {
+      valid: true,
+      sameAsProfile,
+      payload,
+    };
+  }, [uid, nickname, bio, snsUrl, profile]);
 
   return {
     nickname,
@@ -105,7 +112,7 @@ export function useProfileForm(
     handleNicknameBlur,
     handleBioBlur,
     handleSnsUrlBlur,
-    handleSubmit,
+    validateAndGetSubmitResult,
     canSave,
     upsert,
   };
