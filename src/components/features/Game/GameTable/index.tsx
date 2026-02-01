@@ -138,11 +138,6 @@ const Tittle = styled.h2`
   color: ${Colors.TextBlack};
 `;
 
-const Description = styled.div`
-  color: ${Colors.TextBlack};
-  font-size: 14px;
-`;
-
 const VerticalTable = styled.div`
   display: flex;
   flex-direction: row;
