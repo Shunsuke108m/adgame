@@ -1,9 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import type { GameRow } from "../../../types/GameRow";
+import type { GameRow } from "~/types/GameRow";
 import { useSetAtom } from "jotai";
-import { modalAtom } from "../../../jotai/DescriptionModal/atom";
-import { Colors } from "../../../styles/colors";
+import { descriptionModalAtom } from "~/jotai/DescriptionModal/atom";
+import { InfoIcon } from "~/components/appearances/InfoIcon";
+import { Colors } from "~/styles/colors";
+import { useGameRows } from "./hooks";
+import { getCellTrend, type CellTrend } from "./trend";
 
 const COLUMN_DESCRIPTIONS: Record<string, { title: string; text: string }> = {
   week: {
@@ -51,43 +54,69 @@ const columns = [
   { key: "cpa", label: "CPA" }
 ];
 
-type Props = {
-  rows: GameRow[];
-  targetCPA?: number;
-};
-export const GameTable: React.FC<Props> = ({ rows, targetCPA = 20000 }) => {
-  const setModal = useSetAtom(modalAtom);
+export const GameTable: React.FC = () => {
+  const rows = useGameRows();
+  const setDescriptionModal = useSetAtom(descriptionModalAtom);
 
   const handleThClick = (key: string) => {
-    console.log("Clicked column:", key);
-    setModal({
+    setDescriptionModal({
       open: true,
       title: COLUMN_DESCRIPTIONS[key].title,
-      text: COLUMN_DESCRIPTIONS[key].text
+      text: COLUMN_DESCRIPTIONS[key].text,
     });
   };
 
   return (
     <TableContainer>
-      <TableHeader>
-        <Tittle>管理画面</Tittle>
-        <GoalCPA>
-          <GoalLabel>目標CPA:</GoalLabel>
-          <GoalValue>¥{targetCPA.toLocaleString()}</GoalValue>
-        </GoalCPA>
-      </TableHeader>
-      <div>行名をタップすると説明が表示されます。</div>
+      <Tittle>管理画面</Tittle>
+      {/* <Description>CPAを目標値以内に改善し、予算を増額していくことでCV数を最大化しましょう</Description> */}
       <VerticalTable>
         <Column>
           {columns.map((col) => (
-            <ColumnHeader key={col.key} onClick={() => handleThClick(col.key)} style={{ cursor: "pointer" }}>{col.label}</ColumnHeader>
+            <ColumnHeader
+              key={col.key}
+              onClick={() => handleThClick(col.key)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  handleThClick(col.key);
+                }
+              }}
+              aria-label={`${col.label}の説明を表示`}
+            >
+              <InfoIconWrapper onClick={(e) => e.stopPropagation()}>
+                <InfoIcon
+                  onClick={() => handleThClick(col.key)}
+                  size={18}
+                  backgroundColor={Colors.BackgroundWhite}
+                  textColor={Colors.Primary}
+                  aria-label={`${col.label}の説明を表示`}
+                />
+              </InfoIconWrapper>
+              <HeaderLabel>{col.label}</HeaderLabel>
+            </ColumnHeader>
           ))}
         </Column>
         {rows.map((row, i) => (
           <Column key={i}>
-            {columns.map((col) => (
-              <ColumnCell key={col.key}>{row[col.key as keyof GameRow]}</ColumnCell>
-            ))}
+            {columns.map((col) => {
+              const prevRow = rows[i + 1];
+              const trend: CellTrend =
+                prevRow != null
+                  ? getCellTrend(
+                      col.key,
+                      row[col.key as keyof GameRow],
+                      prevRow[col.key as keyof GameRow]
+                    )
+                  : null;
+              return (
+                <ColumnCell key={col.key} $trend={trend}>
+                  {row[col.key as keyof GameRow]}
+                </ColumnCell>
+              );
+            })}
           </Column>
         ))}
       </VerticalTable>
@@ -103,35 +132,15 @@ const TableContainer = styled.div`
   width: 100%;
 `;
 
-const TableHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
-`;
-
 const Tittle = styled.h2`
-  margin: 0;
+  margin: 0px;
+  margin-bottom: 4px;
   color: ${Colors.TextBlack};
 `;
 
-const GoalCPA = styled.div`
-  display: flex;
-  border: 1px solid ${Colors.Border};
-  background: ${Colors.BackgroundWhite};
-`;
-
-const GoalLabel = styled.div`
-  padding: 4px 8px;
-  background: ${Colors.Secondary};
+const Description = styled.div`
   color: ${Colors.TextBlack};
-  font-weight: bold;
-  border-right: 1px solid ${Colors.Border};
-`;
-
-const GoalValue = styled.div`
-  padding: 4px 8px;
-  color: ${Colors.TextBlack};
+  font-size: 14px;
 `;
 
 const VerticalTable = styled.div`
@@ -155,22 +164,44 @@ const Column = styled.div`
 `;
 
 const ColumnHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  /* justify-content: center; */
+  gap: 4px;
   background: ${Colors.Secondary};
   border: 1px solid ${Colors.Border};
   padding: 6px 8px;
-  text-align: center;
   font-weight: bold;
   color: ${Colors.TextBlack};
+  cursor: pointer;
   &:first-child {
     background: ${Colors.Secondary};
   }
+  &:hover {
+    opacity: 0.9;
+  }
 `;
 
-const ColumnCell = styled.div`
+const HeaderLabel = styled.span`
+  white-space: nowrap;
+`;
+
+const InfoIconWrapper = styled.span`
+  display: flex;
+  flex-shrink: 0;
+`;
+
+const ColumnCell = styled.div<{ $trend?: CellTrend }>`
   border: 1px solid ${Colors.Border};
   padding: 6px 8px;
   text-align: center;
-  background: ${Colors.BackgroundWhite};
+  background: ${(p) =>
+    p.$trend === "improve"
+      ? Colors.Improve
+      : p.$trend === "worsen"
+        ? Colors.Worsen
+        : Colors.BackgroundWhite};
   color: ${Colors.TextBlack};
   white-space: nowrap;
   overflow: hidden;

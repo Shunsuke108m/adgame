@@ -5,6 +5,8 @@ const BackgroundWhite = '#FFFFFF';
 const TextBlack = '#1F2E36';
 const TextWhite = '#E5EFF8';
 const Border = '#DBDCDE';
+const Improve = '#E6F4EA';
+const Worsen = '#FCE8E6';
 
 export const Colors = {
   Primary,
@@ -14,4 +16,6 @@ export const Colors = {
   TextBlack,
   TextWhite,
   Border,
-}
+  Improve,
+  Worsen,
+};

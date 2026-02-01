@@ -1,18 +1,18 @@
 import React from "react";
 import styled from "styled-components";
 import { useAtom } from "jotai";
-import { modalAtom } from "../../jotai/DescriptionModal/atom";
+import { descriptionModalAtom } from "../../jotai/DescriptionModal/atom";
 import { Colors } from "../../styles/colors";
 
 export const Modal: React.FC = () => {
-  const [modal, setModal] = useAtom(modalAtom);
-  if (!modal.open) return null;
+  const [descriptionModal, setDescriptionModal] = useAtom(descriptionModalAtom);
+  if (!descriptionModal.open) return null;
   return (
-    <Overlay onClick={() => setModal({ ...modal, open: false })}>
+    <Overlay onClick={() => setDescriptionModal({ ...descriptionModal, open: false })}>
       <ModalBox onClick={e => e.stopPropagation()}>
-        <CloseButton onClick={() => setModal({ ...modal, open: false })}>×</CloseButton>
-        <Title>{modal.title}</Title>
-        <Text>{modal.text.split("\n").map((line, i) => <div key={i}>{line}</div>)}</Text>
+        <CloseButton onClick={() => setDescriptionModal({ ...descriptionModal, open: false })}>×</CloseButton>
+        <Title>{descriptionModal.title}</Title>
+        <Text>{descriptionModal.text.split("\n").map((line, i) => <div key={i}>{line}</div>)}</Text>
       </ModalBox>
     </Overlay>
   );

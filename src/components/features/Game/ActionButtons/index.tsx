@@ -1,8 +1,15 @@
 import React from "react";
 import styled from "styled-components";
 import { useSetAtom } from "jotai";
-import { modalAtom } from "../../../jotai/DescriptionModal/atom";
-import { Colors } from "../../../styles/colors";
+import { descriptionModalAtom } from "~/jotai/DescriptionModal/atom";
+import { TARGET_CPA, TOTAL_TURNS } from "~/lib/gameConfig";
+import { InfoIcon } from "~/components/appearances/InfoIcon";
+import { useGamePlayAgain } from "~/components/features/ResultModal/hooks";
+import { useGameActive, useGameExecute, useGameToggle } from "./hooks";
+import { useGameRows } from "../GameTable/hooks";
+import { Colors } from "~/styles/colors";
+
+const parseNum = (str: string) => parseFloat(str.replace(/[^\d.]/g, "")) || 0;
 
 const actions = [
   { id: "CRBtn", label: "バナー変更" },
@@ -30,42 +37,70 @@ const ACTION_DESCRIPTIONS: Record<string, { title: string; text: string }> = {
   }
 };
 
-export type ActionButtonsProps = {
-  active: string[];
-  onToggle: (id: string) => void;
-  onExecute: () => void;
-};
+export const ActionButtons: React.FC = () => {
+  const setDescriptionModal = useSetAtom(descriptionModalAtom);
+  const rows = useGameRows();
+  const active = useGameActive();
+  const onToggle = useGameToggle();
+  const onExecute = useGameExecute();
+  const onRetry = useGamePlayAgain();
 
-export const ActionButtons: React.FC<ActionButtonsProps> = ({ active, onToggle, onExecute }) => {
-  const setModal = useSetAtom(modalAtom);
+  const currentWeek =
+    rows.length > 0
+      ? parseInt(rows[0].week.replace(/\D/g, ""), 10) || 0
+      : 0;
+  const remainingTurns = Math.max(0, TOTAL_TURNS - currentWeek);
+  const isGameOver = remainingTurns === 0;
+
+  const currentCpa =
+    rows.length > 0 ? parseNum(rows[0].cpa) : Infinity;
+  const canIncreaseBudget = currentCpa <= TARGET_CPA;
 
   const handleInfoClick = (id: string) => {
-    setModal({
+    setDescriptionModal({
       open: true,
       title: ACTION_DESCRIPTIONS[id].title,
-      text: ACTION_DESCRIPTIONS[id].text
+      text: ACTION_DESCRIPTIONS[id].text,
     });
   };
 
   return (
     <ActionBtnList>
       <ul>
-        {actions.map((action) => (
-          <ActionCheckItem key={action.id}>
-            <input
-              type="checkbox"
-              id={action.id}
-              checked={active.includes(action.id)}
-              onChange={() => onToggle(action.id)}
-            />
-            <label htmlFor={action.id}>{action.label}</label>
-            <InfoIcon onClick={() => handleInfoClick(action.id)} tabIndex={0} aria-label="説明を表示">
-              i
-            </InfoIcon>
-          </ActionCheckItem>
-        ))}
+        {actions.map((action) => {
+          const isIncrease = action.id === "increaseBtn";
+          const disabled = isIncrease && !canIncreaseBudget;
+          return (
+            <ActionCheckItem key={action.id} $disabled={disabled}>
+              <input
+                type="checkbox"
+                id={action.id}
+                checked={active.includes(action.id)}
+                disabled={disabled}
+                onChange={() => !disabled && onToggle(action.id)}
+              />
+              <label htmlFor={action.id}>{action.label}</label>
+              <InfoIconWrapper>
+                <InfoIcon
+                  onClick={() => handleInfoClick(action.id)}
+                  size={28}
+                  aria-label={`${action.label}の説明を表示`}
+                  tabIndex={0}
+                />
+              </InfoIconWrapper>
+            </ActionCheckItem>
+          );
+        })}
       </ul>
-      <ExecBtn className="executionBtn" onClick={onExecute}>実行する</ExecBtn>
+      {isGameOver ? (
+        <ExecBtn type="button" onClick={onRetry}>
+          リトライ
+        </ExecBtn>
+      ) : (
+        <ExecBtn type="button" className="executionBtn" onClick={onExecute}>
+          実行する
+        </ExecBtn>
+      )}
     </ActionBtnList>
   );
 };
@@ -84,21 +119,25 @@ export const ActionBtnList = styled.div`
   }
 `;
 
-export const ActionCheckItem = styled.li`
+export const ActionCheckItem = styled.li<{ $disabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 8px 4px;
-  background: #fff2;
-  border: 1px solid ${Colors.Primary};
+  background: ${(p) => (p.$disabled ? Colors.BackgroundGray : "#fff2")};
+  border: 1px solid ${(p) => (p.$disabled ? Colors.Border : Colors.Primary)};
   border-radius: 8px;
   color: ${Colors.TextBlack};
   position: relative;
+  opacity: ${(p) => (p.$disabled ? 0.85 : 1)};
   label {
-    cursor: pointer;
+    cursor: ${(p) => (p.$disabled ? "not-allowed" : "pointer")};
     color: ${Colors.TextBlack};
     font-size: 16px;
     flex: 1;
+  }
+  input[type="checkbox"]:disabled {
+    cursor: not-allowed;
   }
   input[type="checkbox"] {
     accent-color: ${Colors.Primary};
@@ -108,22 +147,8 @@ export const ActionCheckItem = styled.li`
   }
 `;
 
-export const InfoIcon = styled.button`
+const InfoIconWrapper = styled.span`
   margin-left: auto;
-  background: ${Colors.Primary};
-  color: ${Colors.BackgroundWhite};
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 `;
 
 export const ExecBtn = styled.button`
