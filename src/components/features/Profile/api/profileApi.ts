@@ -89,6 +89,18 @@ export async function updatePhotoURL(
 }
 
 /**
+ * profiles/{uid} の photoURL を削除（プロフィール編集で画像を外すとき）。
+ */
+export async function clearPhotoURL(uid: string): Promise<void> {
+  const ref = doc(db, "profiles", uid);
+  await setDoc(
+    ref,
+    { photoURL: null, updatedAt: serverTimestamp() },
+    { merge: true }
+  );
+}
+
+/**
  * profiles/{uid} の bestScore のみ更新（スコア保存時に scores と同期する用）。
  */
 export async function updateBestScore(

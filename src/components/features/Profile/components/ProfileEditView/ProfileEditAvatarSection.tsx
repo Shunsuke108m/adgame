@@ -8,6 +8,7 @@ export type ProfileEditAvatarSectionProps = {
   fileInputRef: React.RefObject<HTMLInputElement | null>;
   selectedFile: File | null;
   onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemovePhoto: () => void;
   uploadImage: ReturnType<typeof useUploadProfileImage>;
 };
 
@@ -16,6 +17,7 @@ export const ProfileEditAvatarSection: React.FC<ProfileEditAvatarSectionProps> =
   fileInputRef,
   selectedFile,
   onFileChange,
+  onRemovePhoto,
   uploadImage,
 }) => (
   <Section>
@@ -38,6 +40,11 @@ export const ProfileEditAvatarSection: React.FC<ProfileEditAvatarSectionProps> =
           aria-label="画像を選択"
         />
         <FileLabel htmlFor="profile-edit-photo">画像を選択</FileLabel>
+        {displayPhotoUrl != null && (
+          <RemoveButton type="button" onClick={onRemovePhoto}>
+            画像を削除
+          </RemoveButton>
+        )}
         {selectedFile != null && (
           <Hint>選択中: {selectedFile.name}（保存で反映されます）</Hint>
         )}
@@ -116,6 +123,20 @@ const FileLabel = styled.label`
   &:hover {
     background: ${Colors.Secondary};
     border-color: ${Colors.Primary};
+  }
+`;
+const RemoveButton = styled.button`
+  padding: 0;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: #718096;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  &:hover {
+    color: #4a5568;
+    text-decoration: underline;
   }
 `;
 const Hint = styled.span`

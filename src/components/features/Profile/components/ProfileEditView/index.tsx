@@ -6,6 +6,7 @@ import { useAuthUser } from "~/components/features/AuthUser/hooks/useAuthUser";
 import { useProfile } from "~/components/features/Profile/hooks/useProfile";
 import { useProfileForm } from "~/components/features/Profile/hooks/useProfileForm";
 import { useProfileEditAvatar } from "~/components/features/Profile/hooks/useProfileEditAvatar";
+import { clearPhotoURL } from "~/components/features/Profile/api/profileApi";
 import { ProfileEditAvatarSection } from "./ProfileEditAvatarSection";
 import { ProfileEditFormFields } from "./ProfileEditFormFields";
 import { Colors } from "~/styles/colors";
@@ -26,6 +27,14 @@ export const ProfileEditView: React.FC<ProfileEditViewProps> = ({ uid }) => {
       try {
         await avatar.uploadImage.mutateAsync(avatar.selectedFile);
         avatar.clearSelection();
+      } catch {
+        return;
+      }
+    }
+    if (avatar.removePhoto && uid) {
+      try {
+        await clearPhotoURL(uid);
+        avatar.clearRemovePhoto();
       } catch {
         return;
       }
@@ -74,6 +83,7 @@ export const ProfileEditView: React.FC<ProfileEditViewProps> = ({ uid }) => {
             fileInputRef={avatar.fileInputRef}
             selectedFile={avatar.selectedFile}
             onFileChange={avatar.handleFileChange}
+            onRemovePhoto={avatar.handleRemovePhoto}
             uploadImage={avatar.uploadImage}
           />
           <ProfileEditFormFields
