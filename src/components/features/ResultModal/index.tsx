@@ -68,7 +68,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
         {!isLoggedIn && (
           <GuestBlock>
             <GuestText>
-              ログインするとスコアを保存できます
+              ログインするとランキングに参加できます
             </GuestText>
             <GoogleLoginButton type="button" onClick={onGoogleLogin}>
               Googleでログイン
@@ -183,8 +183,9 @@ const GuestBlock = styled.div`
 
 const GuestText = styled.p`
   font-size: 0.875rem;
+  font-weight: 600;
   color: ${Colors.TextBlack};
-  margin: 0 0 12px 0;
+  margin: 0 0 4px 0;
   line-height: 1.5;
 `;
 
@@ -206,7 +207,6 @@ const GoogleLoginButton = styled.button`
 `;
 
 const ButtonRow = styled.div`
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 10px;

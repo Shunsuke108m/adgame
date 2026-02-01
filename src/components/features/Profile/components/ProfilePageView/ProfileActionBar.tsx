@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { logout } from "~/components/features/AuthUser/authActions";
+import { logout, withdraw } from "~/components/features/AuthUser/authActions";
+import { useAuthUser } from "~/components/features/AuthUser/hooks/useAuthUser";
 import { useProfilePageShare } from "~/components/features/Profile/hooks/useProfilePageShare";
 import { Colors } from "~/styles/colors";
 
@@ -9,14 +10,30 @@ export type ProfileActionBarProps = {
   showLogout: boolean;
 };
 
+const WITHDRAW_CONFIRM_MESSAGE =
+  "退会するとプロフィールとスコアが削除され、ランキングに表示されなくなります。\n再度ログインすると新規として扱われます。\n退会しますか？";
+
 /**
- * プロフィールページの共有・ログアウトアクション。
+ * プロフィールページの共有・ログアウト・退会アクション。
  */
 export const ProfileActionBar: React.FC<ProfileActionBarProps> = ({
   showShare,
   showLogout,
 }) => {
   const { handleShare, copyMessage } = useProfilePageShare();
+  const { user } = useAuthUser();
+  const [withdrawing, setWithdrawing] = useState(false);
+
+  const handleWithdraw = async () => {
+    if (!user?.uid) return;
+    if (!window.confirm(WITHDRAW_CONFIRM_MESSAGE)) return;
+    setWithdrawing(true);
+    try {
+      await withdraw(user.uid);
+    } finally {
+      setWithdrawing(false);
+    }
+  };
 
   return (
     <ActionBar>
@@ -34,9 +51,20 @@ export const ProfileActionBar: React.FC<ProfileActionBarProps> = ({
         </ShareBlock>
       )}
       {showLogout && (
-        <LogoutLink type="button" onClick={() => void logout()}>
-          ログアウト
-        </LogoutLink>
+        <AccountRow>
+          <LogoutLink type="button" onClick={() => void logout()}>
+            ログアウト
+          </LogoutLink>
+          <Separator aria-hidden>|</Separator>
+          <WithdrawLink
+            type="button"
+            onClick={handleWithdraw}
+            disabled={withdrawing}
+            aria-label="退会（ランキングから外れます）"
+          >
+            {withdrawing ? "処理中..." : "退会"}
+          </WithdrawLink>
+        </AccountRow>
       )}
     </ActionBar>
   );
@@ -82,6 +110,14 @@ const CopyToast = styled.span<{ $error?: boolean }>`
   color: ${(p) => (p.$error ? "#c53030" : Colors.Primary)};
 `;
 
+const AccountRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+`;
+
 const LogoutLink = styled.button`
   padding: 0;
   margin: 0;
@@ -94,5 +130,31 @@ const LogoutLink = styled.button`
   text-decoration: none;
   &:hover {
     text-decoration: underline;
+  }
+`;
+
+const Separator = styled.span`
+  font-size: 0.75rem;
+  color: ${Colors.Border};
+  user-select: none;
+`;
+
+const WithdrawLink = styled.button`
+  padding: 0;
+  margin: 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #718096;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  &:hover:not(:disabled) {
+    color: #4a5568;
+    text-decoration: underline;
+  }
+  &:disabled {
+    cursor: default;
+    color: #a0aec0;
   }
 `;

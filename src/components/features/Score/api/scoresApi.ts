@@ -6,6 +6,7 @@ import {
   orderBy,
   query,
   setDoc,
+  deleteDoc,
   serverTimestamp,
   limit,
 } from "firebase/firestore";
@@ -63,6 +64,14 @@ export async function submitScore(score: number): Promise<void> {
     { merge: true }
   );
   await updateBestScore(uid, score);
+}
+
+/**
+ * scores/{uid} を削除（退会時）。ランキングに表示されなくする。本人のみ削除可能とする想定。
+ */
+export async function deleteScore(uid: string): Promise<void> {
+  const ref = doc(db, "scores", uid);
+  await deleteDoc(ref);
 }
 
 /**

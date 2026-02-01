@@ -26,7 +26,7 @@ service cloud.firestore {
         && request.resource.data.bestScore is number
         && request.resource.data.bestScore >= 0
         && request.resource.data.updatedAt == request.time;
-      allow delete: if false;
+      allow delete: if request.auth != null && request.auth.uid == uid;
     }
   }
 }
@@ -38,7 +38,7 @@ service cloud.firestore {
 |--------|------|
 | `allow read: if true` | 誰でもランキング用に `scores/{uid}` を読める |
 | `allow create, update` | ログイン本人のみ、かつ `bestScore` が number で 0 以上、`updatedAt` はサーバー時刻 |
-| `allow delete: if false` | 削除は禁止（必要なら後で変更可） |
+| `allow delete` | 本人のみ削除可能（退会時にランキングから外すため） |
 
 ### フィールド制約
 

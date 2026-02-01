@@ -2,6 +2,7 @@ import {
   doc,
   getDoc,
   setDoc,
+  deleteDoc,
   serverTimestamp,
   type Timestamp,
 } from "firebase/firestore";
@@ -100,4 +101,12 @@ export async function updateBestScore(
     { bestScore, updatedAt: serverTimestamp() },
     { merge: true }
   );
+}
+
+/**
+ * profiles/{uid} を削除（退会時）。本人のみ削除可能とする想定。
+ */
+export async function deleteProfile(uid: string): Promise<void> {
+  const ref = doc(db, "profiles", uid);
+  await deleteDoc(ref);
 }
