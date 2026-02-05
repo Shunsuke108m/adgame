@@ -5,7 +5,7 @@ import { gamePlayStateAtom, type GamePlayState } from "~/jotai/Game/atom";
 import { type GameResult, gameResultModalOpenAtom, gameResultAtom } from "~/jotai/GameResult/atom";
 import { TARGET_CPA } from "~/lib/gameConfig";
 import { buildGameRow } from "~/lib/gameRow";
-import { submitScore } from "~/components/features/Score/api/scoresApi";
+import { getMyBestScore, submitScore } from "~/components/features/Score/api/scoresApi";
 
 const parseNum = (str: string) => parseFloat(str.replace(/[^\d.]/g, "")) || 0;
 const parseCv = (cvStr: string) => parseInt(cvStr.replace(/\D/g, ""), 10) || 0;
@@ -115,8 +115,17 @@ export function useGameExecute(): () => void {
         const next = computeNextState(prev);
         if (next.rows[0].week === "24週目") {
           const cv = parseCv(next.rows[0].cv);
-          queueMicrotask(() => {
-            openGameResultModal({ score: cv, bestScore: next.bestScore });
+          queueMicrotask(async () => {
+            let bestToShow = next.bestScore;
+            try {
+              const storedBest = await getMyBestScore();
+              if (storedBest != null) {
+                bestToShow = Math.max(storedBest, cv);
+              }
+            } catch {
+              // 取得失敗時はセッション内ベストのまま
+            }
+            openGameResultModal({ score: cv, bestScore: bestToShow });
             void submitScore(cv).then(() => {
               queryClient.invalidateQueries({ queryKey: ["topScores"] });
             });

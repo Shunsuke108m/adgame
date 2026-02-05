@@ -8,7 +8,6 @@ import {
   useGameResultModalOpen,
   useGameResult,
   useGameResultModalAuthUser,
-  useCopyProfileUrl,
   } from "./hooks";
 import { useGamePlayAgain } from "./hooks";
 
@@ -25,7 +24,6 @@ export const ResultModal: React.FC<ResultModalProps> = ({
   const [open, setOpen] = useGameResultModalOpen();
   const result = useGameResult();
   const user = useGameResultModalAuthUser();
-  const { copyProfileUrl, copySuccess } = useCopyProfileUrl(user?.uid);
   const { data: profile } = useProfile(user?.uid ?? undefined);
 
   const isLoggedIn = user !== null;
@@ -51,24 +49,14 @@ export const ResultModal: React.FC<ResultModalProps> = ({
         </ScoreRow>
         <ScoreRow>
           <Label>ベストスコア</Label>
-          <Value>{result.bestScore?.toLocaleString()} CV</Value>
+          <Value>
+            {isLoggedIn
+              ? result.bestScore != null
+                ? `${result.bestScore.toLocaleString()} CV`
+                : "-- CV"
+              : "--"}
+          </Value>
         </ScoreRow>
-
-        {isLoggedIn && (
-          <>
-            <CopyRow>
-              <CopyButton type="button" onClick={copyProfileUrl}>
-                ベストスコアをURLで共有
-              </CopyButton>
-              {copySuccess && <Toast>コピーしました</Toast>}
-            </CopyRow>
-            {!hasProfile && user && (
-              <ProfileEditLink to={`/profiles/${user.uid}/edit`}>
-                プロフィールを作成して共有しよう
-              </ProfileEditLink>
-            )}
-          </>
-        )}
 
         {!isLoggedIn && (
           <GuestBlock>
@@ -88,7 +76,17 @@ export const ResultModal: React.FC<ResultModalProps> = ({
           <SecondaryButton as="a" href="/ranking">
             ランキングを見る
           </SecondaryButton>
+          {isLoggedIn && user && (
+            <ProfileLink to={`/profiles/${user.uid}`} onClick={() => setOpen(false)}>
+              プロフィールで順位を確認
+            </ProfileLink>
+          )}
         </ButtonRow>
+        {!hasProfile && isLoggedIn && user && (
+          <ProfileEditLink to={`/profiles/${user.uid}/edit`}>
+            プロフィールを作成して共有しよう
+          </ProfileEditLink>
+        )}
         <AdSenseSlot slot={RESULT_MODAL_AD_SLOT} square />
       </ModalBox>
     </Overlay>
@@ -152,34 +150,6 @@ const Value = styled.span`
   color: ${Colors.TextBlack};
 `;
 
-const CopyRow = styled.div`
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-`;
-
-const CopyButton = styled.button`
-  background: ${Colors.BackgroundGray};
-  color: ${Colors.TextBlack};
-  border: 1px solid ${Colors.Border};
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  &:hover {
-    background: ${Colors.Secondary};
-    border-color: ${Colors.Primary};
-  }
-`;
-
-const Toast = styled.span`
-  font-size: 0.8125rem;
-  color: ${Colors.Primary};
-`;
-
 const GuestBlock = styled.div`
   margin-top: 16px;
   padding-top: 16px;
@@ -233,6 +203,22 @@ const PrimaryButton = styled.button`
 `;
 
 const SecondaryButton = styled.a`
+  background: ${Colors.BackgroundWhite};
+  color: ${Colors.Primary};
+  border: 1px solid ${Colors.Primary};
+  border-radius: 6px;
+  padding: 10px 16px;
+  font-size: 0.9375rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  &:hover {
+    background: ${Colors.Secondary};
+  }
+`;
+
+const ProfileLink = styled(Link)`
   background: ${Colors.BackgroundWhite};
   color: ${Colors.Primary};
   border: 1px solid ${Colors.Primary};

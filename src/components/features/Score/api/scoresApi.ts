@@ -43,6 +43,18 @@ export function toBioPreview(bio: string | undefined | null): string | undefined
 }
 
 /**
+ * ログインユーザーの現在のベストスコアを取得。未ログインまたは未保存なら null。
+ */
+export async function getMyBestScore(): Promise<number | null> {
+  const currentUser = auth.currentUser;
+  if (!currentUser) return null;
+  const ref = doc(db, "scores", currentUser.uid);
+  const snap = await getDoc(ref);
+  const data = snap.data() as ScoreDoc | undefined;
+  return data?.bestScore ?? null;
+}
+
+/**
  * ログインユーザーのスコアを保存（ベストのみ更新）。
  * 未ログインなら何もしない。scores/{uid} と profiles/{uid}.bestScore を更新。
  */
