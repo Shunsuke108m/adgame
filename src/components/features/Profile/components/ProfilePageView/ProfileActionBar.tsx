@@ -3,11 +3,14 @@ import styled from "styled-components";
 import { logout, withdraw } from "~/components/features/AuthUser/authActions";
 import { useAuthUser } from "~/components/features/AuthUser/hooks/useAuthUser";
 import { useProfilePageShare } from "~/components/features/Profile/hooks/useProfilePageShare";
+import type { OgpPayload } from "~/components/features/Profile/api/ogpApi";
 import { Colors } from "~/styles/colors";
 
 export type ProfileActionBarProps = {
   showShare: boolean;
   showLogout: boolean;
+  /** 共有ボタン押下時に OGP 画像生成 API へ送る payload。未指定なら OGP リクエストは行わない。 */
+  shareOgpPayload?: OgpPayload;
 };
 
 const WITHDRAW_CONFIRM_MESSAGE =
@@ -19,8 +22,9 @@ const WITHDRAW_CONFIRM_MESSAGE =
 export const ProfileActionBar: React.FC<ProfileActionBarProps> = ({
   showShare,
   showLogout,
+  shareOgpPayload,
 }) => {
-  const { handleShare, copyMessage } = useProfilePageShare();
+  const { handleShare, copyMessage } = useProfilePageShare(shareOgpPayload);
   const { user } = useAuthUser();
   const [withdrawing, setWithdrawing] = useState(false);
 

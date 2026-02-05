@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
+import { requestOgpProfileImage, type OgpPayload } from "../api/ogpApi";
 
 const TOAST_DURATION_MS = 2500;
 
 /**
  * プロフィールページの「このカードを共有」用。
  * URL をクリップボードにコピーし、結果トーストの状態を返す。
+ * ogpPayload が渡された場合はコピー後に POST /ogp/profiles を fire-and-forget で呼ぶ。
  */
-export function useProfilePageShare(): {
+export function useProfilePageShare(ogpPayload?: OgpPayload): {
   handleShare: () => void;
   copyMessage: "success" | "fail" | null;
 } {
@@ -24,9 +26,12 @@ export function useProfilePageShare(): {
     const url = window.location.href;
     navigator.clipboard
       .writeText(url)
-      .then(() => setCopyMessage("success"))
+      .then(() => {
+        setCopyMessage("success");
+        if (ogpPayload) requestOgpProfileImage(ogpPayload);
+      })
       .catch(() => setCopyMessage("fail"));
-  }, []);
+  }, [ogpPayload]);
 
   return { handleShare, copyMessage };
 }

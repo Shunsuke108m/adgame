@@ -15,6 +15,10 @@ export type ProfileData = {
   photoURL?: string | null;
   bestScore?: number | null;
   rank?: number | null;
+  /** OGP 画像の絶対URL。OGP 生成 API が Firestore に書き込む。 */
+  ogpProfileImageUrl?: string | null;
+  /** OGP 画像を生成した日時。OGP 生成 API が Firestore に書き込む。 */
+  ogpProfileGeneratedAt?: Timestamp | null;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 };
@@ -40,6 +44,8 @@ export async function getProfile(uid: string): Promise<ProfileData | null> {
     photoURL: data.photoURL ?? null,
     bestScore: data.bestScore ?? null,
     rank: data.rank ?? null,
+    ogpProfileImageUrl: data.ogpProfileImageUrl ?? null,
+    ogpProfileGeneratedAt: data.ogpProfileGeneratedAt ?? null,
     createdAt: data.createdAt,
     updatedAt: data.updatedAt,
   };

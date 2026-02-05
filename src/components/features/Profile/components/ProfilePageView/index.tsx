@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { useAuthUser } from "~/components/features/AuthUser/hooks/useAuthUser";
 import { useProfile } from "~/components/features/Profile/hooks/useProfile";
+import { useProfilePageOgpMeta } from "~/components/features/Profile/hooks/useProfilePageOgpMeta";
 import { useProfileSavedToast } from "~/components/features/Profile/hooks/useProfileSavedToast";
 import { useTopScores } from "~/components/features/Score/hooks/useTopScores";
 import { ProfileIncompleteCard } from "./ProfileIncompleteCard";
@@ -40,6 +41,11 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
     return entry != null ? `${entry.rank}位` : "100位圏外";
   }, [uid, topScores, topScoresLoading]);
 
+  // プロフィールが存在するときだけ OGP メタを設定（共有プレビュー用）
+  useProfilePageOgpMeta(
+    uid && profile ? { uid, profile } : null
+  );
+
   if (!authReady || isLoading) {
     return (
       <Page>
@@ -74,6 +80,17 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
     );
   }
 
+  const shareOgpPayload = useMemo(
+    () => ({
+      uid,
+      nickname: profile.nickname ?? "",
+      photoURL: profile.photoURL ?? undefined,
+      bestScore: profile.bestScore ?? 0,
+      rankDisplay,
+    }),
+    [uid, profile.nickname, profile.photoURL, profile.bestScore, rankDisplay]
+  );
+
   return (
     <>
       <Page>
@@ -83,7 +100,11 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
           isMine={isMine(uid)}
           rankDisplay={rankDisplay}
         />
-        <ProfileActionBar showShare={true} showLogout={isMine(uid)} />
+        <ProfileActionBar
+          showShare={true}
+          showLogout={isMine(uid)}
+          shareOgpPayload={shareOgpPayload}
+        />
         <AdSlot>広告枠</AdSlot>
       </Page>
       {showSavedToast && <SavedToast>保存しました</SavedToast>}

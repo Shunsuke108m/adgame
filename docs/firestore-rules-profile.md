@@ -24,6 +24,9 @@ service cloud.firestore {
 - `allow read: if true` … 誰でも `profiles/{uid}` を読める（このページは read-only 想定）
 - `allow write` … 本人のみ編集可能（将来のプロフィール編集用）
 
+**OGP 用フィールド**  
+`profiles/{uid}` には OGP 生成 API（バックエンド）が **`ogpProfileImageUrl`** と **`ogpProfileGeneratedAt`** を書き込む想定です。これらは Admin SDK 等でサーバー側から書くため、上記の `allow write`（本人のみ）とは別に、バックエンド用の権限で書き込んでください。クライアントはこれらのフィールドを **読むだけ**（既に `allow read: if true` で可）。
+
 ### ルールを変更したあと
 
 1. ルールを「公開」する
