@@ -41,10 +41,23 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
     return entry != null ? `${entry.rank}位` : "100位圏外";
   }, [uid, topScores, topScoresLoading]);
 
-  // プロフィールが存在するときだけ OGP メタを設定（共有プレビュー用）
-  useProfilePageOgpMeta(
-    uid && profile ? { uid, profile } : null
+  // 常に同じ順でフックを呼ぶため、早期 return より前に定義（profile が null のときは未使用）
+  const shareOgpPayload = useMemo(
+    () =>
+      uid && profile
+        ? {
+            uid,
+            nickname: profile.nickname ?? "",
+            photoURL: profile.photoURL ?? undefined,
+            bestScore: profile.bestScore ?? 0,
+            rankDisplay,
+          }
+        : null,
+    [uid, profile, rankDisplay]
   );
+
+  // プロフィールが存在するときだけ OGP メタを設定（共有プレビュー用）
+  useProfilePageOgpMeta(uid && profile ? { uid, profile } : null);
 
   if (!authReady || isLoading) {
     return (
@@ -80,17 +93,6 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
     );
   }
 
-  const shareOgpPayload = useMemo(
-    () => ({
-      uid,
-      nickname: profile.nickname ?? "",
-      photoURL: profile.photoURL ?? undefined,
-      bestScore: profile.bestScore ?? 0,
-      rankDisplay,
-    }),
-    [uid, profile.nickname, profile.photoURL, profile.bestScore, rankDisplay]
-  );
-
   return (
     <>
       <Page>
@@ -103,7 +105,7 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
         <ProfileActionBar
           showShare={true}
           showLogout={isMine(uid)}
-          shareOgpPayload={shareOgpPayload}
+          shareOgpPayload={shareOgpPayload ?? undefined}
         />
         <AdSlot>広告枠</AdSlot>
       </Page>

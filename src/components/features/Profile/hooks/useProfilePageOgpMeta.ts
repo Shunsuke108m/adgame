@@ -4,6 +4,9 @@ import type { ProfileData } from "../api/profileApi";
 const SITE_TITLE_SUFFIX = " - 広告運用ゲーム";
 const DEFAULT_OG_IMAGE_PATH = "/ogp/adgame_logo.png";
 
+/** OGP 画像のベース URL（Worker の画像配信ドメイン）。未設定時は同一オリジンの /ogp/{uid}.png を使う。 */
+const OGP_IMAGE_API_BASE = (import.meta.env.VITE_OPG_IMAGE_API_BASE as string | undefined)?.trim();
+
 type MetaInput = {
   uid: string;
   profile: ProfileData;
@@ -27,8 +30,10 @@ export function useProfilePageOgpMeta(input: MetaInput | null): void {
         : "";
     const url = pageUrl ?? (typeof window !== "undefined" ? window.location.href : `${baseUrl}/profiles/${uid}`);
     const title = `${profile.nickname ?? "プロフィール"}${SITE_TITLE_SUFFIX}`;
-    const imageUrl = profile.ogpProfileImageUrl
-      ? profile.ogpProfileImageUrl
+    // 固定URL方式: 画像は Worker(ogp-api) で配信されるため、VITE_OPG_IMAGE_API_BASE の /ogp/{uid}.png を使う
+    const imageBase = OGP_IMAGE_API_BASE ?? baseUrl;
+    const imageUrl = uid
+      ? `${imageBase.endsWith("/") ? imageBase.slice(0, -1) : imageBase}/ogp/${encodeURIComponent(uid)}.png`
       : `${baseUrl}${DEFAULT_OG_IMAGE_PATH}`;
 
     const pairs: [string, string, "property" | "name"][] = [
@@ -55,7 +60,7 @@ export function useProfilePageOgpMeta(input: MetaInput | null): void {
         el.remove();
       }
     };
-    // input の参照が毎レンダー変わるため、メタに使う値だけを依存に含める
+    // input の参照が毎レンダー変わるため、メタに使う値だけを依存に含める（imageUrl は ogpProfileImageUrl または固定 /ogp/{uid}.png）
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     input?.uid,
