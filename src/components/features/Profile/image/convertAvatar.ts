@@ -1,7 +1,8 @@
 /**
  * プロフィール画像を 256x256 正方形にセンタークロップし、
- * webp（未対応なら jpeg）に再エンコードする。
+ * PNG に再エンコードする。
  * createImageBitmap でデコードできない場合はエラー（不正な画像扱い）。
+ * PNG にすることで OGP や Slack 等で扱いやすくする。
  */
 
 const MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
@@ -9,12 +10,12 @@ const OUTPUT_SIZE = 256;
 
 export type ConvertAvatarResult = {
   blob: Blob;
-  contentType: "image/webp" | "image/jpeg";
+  contentType: "image/png";
   fileName: string;
 };
 
 /**
- * File を 256x256 正方形（センタークロップ）に変換し、webp または jpeg の Blob を返す。
+ * File を 256x256 正方形（センタークロップ）に変換し、PNG の Blob を返す。
  * - 20MB 超のファイルはエラー
  * - createImageBitmap に失敗した場合は「画像として不正」でエラー
  */
@@ -49,35 +50,19 @@ export async function convertAvatar(file: File): Promise<ConvertAvatarResult> {
   );
   bitmap.close();
 
-  const blob = await canvasToBlobWebpOrJpeg(canvas);
-  const contentType: "image/webp" | "image/jpeg" = blob.type === "image/webp" ? "image/webp" : "image/jpeg";
-  const fileName = contentType === "image/webp" ? "avatar.webp" : "avatar.jpg";
-
-  return { blob, contentType, fileName };
+  const blob = await canvasToBlobPng(canvas);
+  return { blob, contentType: "image/png", fileName: "avatar.png" };
 }
 
-function canvasToBlobWebpOrJpeg(canvas: HTMLCanvasElement): Promise<Blob> {
+function canvasToBlobPng(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) => {
-    const tryJpeg = (): void => {
-      canvas.toBlob(
-        (jpegBlob) => {
-          if (jpegBlob) resolve(jpegBlob);
-          else reject(new Error("画像の変換に失敗しました"));
-        },
-        "image/jpeg",
-        0.9
-      );
-    };
     canvas.toBlob(
       (blob) => {
-        if (blob && blob.type === "image/webp") {
-          resolve(blob);
-        } else {
-          tryJpeg();
-        }
+        if (blob) resolve(blob);
+        else reject(new Error("画像の変換に失敗しました"));
       },
-      "image/webp",
-      0.9
+      "image/png",
+      1
     );
   });
 }

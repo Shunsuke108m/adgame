@@ -25,7 +25,7 @@ function getUploadToken(): string {
 
 /**
  * POST /profile-images/upload-url を呼び、uploadUrl と publicUrl を取得する。
- * key は profiles/${uid}/avatar.webp で固定（毎回上書き）。
+ * key は profiles/${uid}/avatar.png で固定（毎回上書き）。PNG で OGP・Slack 等の互換性を確保。
  */
 export async function getProfileImageUploadUrl(
   uid: string,
@@ -43,7 +43,7 @@ export async function getProfileImageUploadUrl(
       "x-upload-token": token,
     },
     body: JSON.stringify({
-      key: `profiles/${uid}/avatar.webp`,
+      key: `profiles/${uid}/avatar.png`,
       contentType,
     }),
   });
