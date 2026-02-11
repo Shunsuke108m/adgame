@@ -50,10 +50,9 @@ type PagesFunctionEnv = {
 export async function onRequestGet(context: {
   env: PagesFunctionEnv;
   params: Record<string, string | undefined>;
-  request: Request;
   next: () => Promise<Response>;
 }): Promise<Response> {
-  const { env, params, request, next } = context;
+  const { env, params, next } = context;
   const uid = params?.uid as string | undefined;
   const safeUid = encodeURIComponent(uid ?? "");
   const fallbackMeta: OgpMetaJson = {

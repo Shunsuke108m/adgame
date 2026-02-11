@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import { useAuthUser } from "~/components/features/AuthUser/hooks/useAuthUser";
 import { useProfile } from "~/components/features/Profile/hooks/useProfile";
-import { useProfilePageOgpMeta } from "~/components/features/Profile/hooks/useProfilePageOgpMeta";
 import { useProfileSavedToast } from "~/components/features/Profile/hooks/useProfileSavedToast";
 import { useTopScores } from "~/components/features/Score/hooks/useTopScores";
 import { ProfileIncompleteCard } from "./ProfileIncompleteCard";
@@ -56,9 +55,6 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
         : null,
     [uid, profile, rankDisplay]
   );
-
-  // プロフィールが存在するときだけ OGP メタを設定（共有プレビュー用）
-  useProfilePageOgpMeta(uid && profile ? { uid, profile } : null);
 
   if (!authReady || isLoading) {
     return (
