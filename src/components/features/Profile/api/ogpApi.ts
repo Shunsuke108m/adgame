@@ -9,6 +9,7 @@ export type OgpPayload = {
   uid: string;
   nickname: string;
   photoURL?: string;
+  bio?: string;
   bestScore: number;
   rankDisplay: string;
 };

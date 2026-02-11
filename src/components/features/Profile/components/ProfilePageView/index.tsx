@@ -49,6 +49,7 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
             uid,
             nickname: profile.nickname ?? "",
             photoURL: profile.photoURL ?? undefined,
+            bio: profile.bio ?? undefined,
             bestScore: profile.bestScore ?? 0,
             rankDisplay,
           }
