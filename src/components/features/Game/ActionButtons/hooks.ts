@@ -9,6 +9,7 @@ import { getMyBestScore, submitScore } from "~/components/features/Score/api/sco
 
 const parseNum = (str: string) => parseFloat(str.replace(/[^\d.]/g, "")) || 0;
 const parseCv = (cvStr: string) => parseInt(cvStr.replace(/\D/g, ""), 10) || 0;
+const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
 /**
  * 1ターン分のゲームロジック（純粋関数）。
@@ -24,6 +25,13 @@ function computeNextState(prev: GamePlayState): GamePlayState {
   let cpm = parseNum(row.cpm);
   let ctr = parseNum(row.ctr);
   let cvr = parseNum(row.cvr);
+
+  // 何も施策を打たない週は、媒体学習による微増のみ発生させる（施策の約1/3以下の上げ幅）。
+  if (active.length === 0) {
+    cpm *= randomInRange(1.01, 1.04);
+    ctr *= randomInRange(1.01, 1.15);
+    cvr *= randomInRange(1.01, 1.15);
+  }
 
   if (active.includes("CPNBtn")) {
     cpm =
