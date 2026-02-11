@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { AffiliateAdSlot } from "~/components/common/AffiliateAdSlot";
 import { useAuthUser } from "~/components/features/AuthUser/hooks/useAuthUser";
 import { useProfile } from "~/components/features/Profile/hooks/useProfile";
 import { useProfileSavedToast } from "~/components/features/Profile/hooks/useProfileSavedToast";
@@ -11,7 +12,6 @@ import {
   Page,
   LoadingText,
   EmptyMessage,
-  AdSlot,
   SavedToast,
 } from "./sharedStyles";
 
@@ -78,14 +78,14 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
         <Page>
           <ProfileIncompleteCard uid={uid} />
           <ProfileActionBar showShare={false} showLogout={true} />
-          <AdSlot>広告枠</AdSlot>
+          <AffiliateAdSlot />
         </Page>
       );
     }
     return (
       <Page>
         <ProfileEmptyCard />
-        <AdSlot>広告枠</AdSlot>
+        <AffiliateAdSlot />
       </Page>
     );
   }
@@ -104,7 +104,7 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
           showLogout={isMine(uid)}
           shareOgpPayload={shareOgpPayload ?? undefined}
         />
-        <AdSlot>広告枠</AdSlot>
+        <AffiliateAdSlot />
       </Page>
       {showSavedToast && <SavedToast>保存しました</SavedToast>}
     </>

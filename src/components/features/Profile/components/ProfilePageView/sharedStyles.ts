@@ -57,23 +57,6 @@ export const CardInnerVertical = styled.div`
   text-align: center;
 `;
 
-export const AdSlot = styled.div`
-  margin-top: 24px;
-  width: 300px;
-  min-width: 300px;
-  height: 250px;
-  min-height: 250px;
-  background: ${Colors.BackgroundGray};
-  border: 1px dashed ${Colors.Border};
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  color: ${Colors.TextBlack};
-  opacity: 0.8;
-`;
-
 export const SavedToast = styled.div`
   position: fixed;
   bottom: 24px;

@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { AdSenseSlot } from "~/components/common/AdSenseSlot";
+import { AffiliateAdSlot } from "~/components/common/AffiliateAdSlot";
 import { useTopScores } from "~/components/features/Score/hooks/useTopScores";
 import { Colors } from "~/styles/colors";
-
-const RANKING_AD_SLOT = "2018777060";
 
 const INITIAL_LIMIT = 20;
 const FULL_LIMIT = 100;
@@ -22,7 +20,7 @@ export const RankingPage: React.FC = () => {
           ベストスコア順です。行をタップするとプロフィールへ移動します。
         </Description>
         <LoadingText>読み込み中...</LoadingText>
-        <AdSenseSlot slot={RANKING_AD_SLOT} square />
+        <AffiliateAdSlot />
       </Page>
     );
   }
@@ -35,7 +33,7 @@ export const RankingPage: React.FC = () => {
           ベストスコア順です。行をタップするとプロフィールへ移動します。
         </Description>
         <EmptyMessage>ランキングを取得できませんでした</EmptyMessage>
-        <AdSenseSlot slot={RANKING_AD_SLOT} square />
+        <AffiliateAdSlot />
       </Page>
     );
   }
@@ -81,7 +79,7 @@ export const RankingPage: React.FC = () => {
           上位100位を表示
         </ExpandButton>
       )}
-      <AdSenseSlot slot={RANKING_AD_SLOT} square />
+      <AffiliateAdSlot />
     </Page>
   );
 };

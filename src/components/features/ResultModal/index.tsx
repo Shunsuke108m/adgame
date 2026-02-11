@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { AdSenseSlot } from "~/components/common/AdSenseSlot";
+import { AffiliateAdSlot } from "~/components/common/AffiliateAdSlot";
 import { useProfile } from "~/components/features/Profile/hooks/useProfile";
 import { Colors } from "../../../styles/colors";
 import {
@@ -10,8 +10,6 @@ import {
   useGameResultModalAuthUser,
   } from "./hooks";
 import { useGamePlayAgain } from "./hooks";
-
-const RESULT_MODAL_AD_SLOT = "7654247128";
 
 export type ResultModalProps = {
   /** 未ログイン時の Google ログインボタン押下（Auth 連携時は渡す） */
@@ -87,7 +85,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
             プロフィールを作成して共有しよう
           </ProfileEditLink>
         )}
-        <AdSenseSlot slot={RESULT_MODAL_AD_SLOT} square />
+        <AffiliateAdSlot />
       </ModalBox>
     </Overlay>
   );
