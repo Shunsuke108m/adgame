@@ -30,6 +30,10 @@ export function useProfilePageOgpMeta(input: MetaInput | null): void {
         : "";
     const url = pageUrl ?? (typeof window !== "undefined" ? window.location.href : `${baseUrl}/profiles/${uid}`);
     const title = `${profile.nickname ?? "プロフィール"}${SITE_TITLE_SUFFIX}`;
+    const description =
+      profile.bestScore != null
+        ? `${profile.nickname ?? "プレイヤー"}さんのベストスコアは ${profile.bestScore.toLocaleString()} CV。あなたも挑戦しよう`
+        : "広告運用ゲーム。あなたも挑戦しよう";
     // 固定URL方式: 画像は Worker(ogp-api) で配信されるため、VITE_OPG_IMAGE_API_BASE の /ogp/{uid}.png を使う
     const imageBase = OGP_IMAGE_API_BASE ?? baseUrl;
     const imageUrl = uid
@@ -38,11 +42,13 @@ export function useProfilePageOgpMeta(input: MetaInput | null): void {
 
     const pairs: [string, string, "property" | "name"][] = [
       ["og:title", title, "property"],
+      ["og:description", description, "property"],
       ["og:url", url, "property"],
       ["og:image", imageUrl, "property"],
       ["og:type", "profile", "property"],
       ["twitter:card", "summary_large_image", "name"],
       ["twitter:title", title, "name"],
+      ["twitter:description", description, "name"],
       ["twitter:image", imageUrl, "name"],
     ];
 
@@ -65,6 +71,7 @@ export function useProfilePageOgpMeta(input: MetaInput | null): void {
   }, [
     input?.uid,
     input?.profile?.nickname,
+    input?.profile?.bestScore,
     input?.profile?.ogpProfileImageUrl,
   ]);
 }
