@@ -69,7 +69,7 @@ export const GameTable: React.FC = () => {
   return (
     <TableContainer>
       <Tittle>管理画面</Tittle>
-      {/* <Description>CPAを目標値以内に改善し、予算を増額していくことでCV数を最大化しましょう</Description> */}
+      <Description>先週対比で改善を緑、悪化を赤で表示します。</Description>
       <VerticalTable>
         <Column>
           {columns.map((col) => (
@@ -134,7 +134,11 @@ const TableContainer = styled.div`
 
 const Tittle = styled.h2`
   margin: 0px;
-  margin-bottom: 4px;
+  color: ${Colors.TextBlack};
+`;
+
+const Description = styled.div`
+  font-size: 12px;
   color: ${Colors.TextBlack};
 `;
 

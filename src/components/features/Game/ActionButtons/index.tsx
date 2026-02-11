@@ -123,7 +123,7 @@ export const ActionCheckItem = styled.li<{ $disabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 8px 4px;
+  padding: 6px 4px;
   background: ${(p) => (p.$disabled ? Colors.BackgroundGray : "#fff2")};
   border: 1px solid ${(p) => (p.$disabled ? Colors.Border : Colors.Primary)};
   border-radius: 8px;

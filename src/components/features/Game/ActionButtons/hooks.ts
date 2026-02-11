@@ -28,9 +28,9 @@ function computeNextState(prev: GamePlayState): GamePlayState {
 
   // 何も施策を打たない週は、媒体学習による微増のみ発生させる（施策の約1/3以下の上げ幅）。
   if (active.length === 0) {
-    cpm *= randomInRange(1.01, 1.04);
-    ctr *= randomInRange(1.01, 1.15);
-    cvr *= randomInRange(1.01, 1.15);
+    cpm *= randomInRange(0.95, 1.04);
+    ctr *= randomInRange(0.95, 1.15);
+    cvr *= randomInRange(0.95, 1.15);
   }
 
   if (active.includes("CPNBtn")) {
