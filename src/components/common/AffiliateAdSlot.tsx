@@ -20,7 +20,7 @@ export const AffiliateAdSlot: React.FC = () => {
   const clickHref = buildClickHref({
     endpoint: CLICK_ENDPOINT,
     adName: ad.adName,
-    adUrl: ad.adUrl,
+    adUrl: ad.adImageUrl,
     redirect: ad.redirect,
     from: typeof window !== "undefined" ? window.location.href : "",
   });
@@ -32,7 +32,7 @@ export const AffiliateAdSlot: React.FC = () => {
         target="_blank"
         rel="noopener noreferrer sponsored nofollow"
       >
-        <AdImage src={ad.adUrl} alt="" loading="lazy" />
+        <AdImage src={ad.adImageUrl} alt="" loading="lazy" />
       </AdLink>
       {ad.impressionSrc && (
         <ImpressionPixel
