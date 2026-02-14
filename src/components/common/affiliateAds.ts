@@ -1,6 +1,7 @@
 export type AffiliateAd = {
-  imageSrc: string;
-  href: string;
+  adName: string;
+  adUrl: string;
+  redirect: string;
   impressionSrc?: string;
 };
 
@@ -10,8 +11,9 @@ export type AffiliateAd = {
  */
 export const AFFILIATE_ADS: AffiliateAd[] = [
   {
-    imageSrc: "https://www21.a8.net/svt/bgt?aid=260208731542&wid=003&eno=01&mid=s00000027239001003000&mc=1",
-    href: "https://px.a8.net/svt/ejp?a8mat=4AX6CB+8YP076+5U6E+5YZ75",
+    adName: "a8_sample_01",
+    adUrl: "https://www21.a8.net/svt/bgt?aid=260208731542&wid=003&eno=01&mid=s00000027239001003000&mc=1",
+    redirect: "https://px.a8.net/svt/ejp?a8mat=4AX6CB+8YP076+5U6E+5YZ75",
     impressionSrc: "https://www17.a8.net/0.gif?a8mat=4AX6CB+8YP076+5U6E+5YZ75",
   }
 ];

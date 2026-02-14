@@ -3,6 +3,11 @@ import styled from "styled-components";
 import { AFFILIATE_ADS } from "./affiliateAds";
 import { Colors } from "~/styles/colors";
 
+const DEFAULT_CLICK_ENDPOINT = "https://ad-click.adgame-web.skikatte.com/r";
+const CLICK_ENDPOINT =
+  (import.meta.env.VITE_AD_CLICK_ENDPOINT as string | undefined)?.trim() ||
+  DEFAULT_CLICK_ENDPOINT;
+
 export const AffiliateAdSlot: React.FC = () => {
   const ad = useMemo(() => {
     if (AFFILIATE_ADS.length === 0) return null;
@@ -12,14 +17,22 @@ export const AffiliateAdSlot: React.FC = () => {
 
   if (!ad) return null;
 
+  const clickHref = buildClickHref({
+    endpoint: CLICK_ENDPOINT,
+    adName: ad.adName,
+    adUrl: ad.adUrl,
+    redirect: ad.redirect,
+    from: typeof window !== "undefined" ? window.location.href : "",
+  });
+
   return (
     <Wrapper>
       <AdLink
-        href={ad.href}
+        href={clickHref}
         target="_blank"
         rel="noopener noreferrer sponsored nofollow"
       >
-        <AdImage src={ad.imageSrc} alt="" loading="lazy" />
+        <AdImage src={ad.adUrl} alt="" loading="lazy" />
       </AdLink>
       {ad.impressionSrc && (
         <ImpressionPixel
@@ -64,3 +77,18 @@ const ImpressionPixel = styled.img`
   opacity: 0;
   pointer-events: none;
 `;
+
+function buildClickHref(input: {
+  endpoint: string;
+  adName: string;
+  adUrl: string;
+  redirect: string;
+  from: string;
+}): string {
+  const url = new URL(input.endpoint);
+  url.searchParams.set("adName", input.adName);
+  url.searchParams.set("adUrl", input.adUrl);
+  url.searchParams.set("redirect", input.redirect);
+  url.searchParams.set("from", input.from);
+  return url.toString();
+}
