@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import type { ProfileFormErrors } from "~/components/features/Profile/hooks/useProfileForm";
+import { SNS_ALLOWED_LABEL } from "~/components/features/Profile/lib/profileFormValidation";
 import { Colors } from "~/styles/colors";
 
 export type ProfileEditFormFieldsProps = {
@@ -60,7 +61,7 @@ export const ProfileEditFormFields: React.FC<ProfileEditFormFieldsProps> = ({
       {errors.bio && <ErrorText>{errors.bio}</ErrorText>}
     </Field>
     <Field>
-      <Label htmlFor="profile-edit-sns">SNS URL</Label>
+      <Label htmlFor="profile-edit-sns">SNS URL（{SNS_ALLOWED_LABEL}）</Label>
       <Input
         id="profile-edit-sns"
         type="url"

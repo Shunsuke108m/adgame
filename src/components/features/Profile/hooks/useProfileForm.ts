@@ -52,6 +52,11 @@ export function useProfileForm(
     }
   }, [profile, profileLoading, uid]);
 
+  // SNS URLは変更のたびにバリデーションを表示（許可ドメイン外を貼った瞬間にエラーを見せる）
+  useEffect(() => {
+    setErrors((e) => ({ ...e, snsUrl: validateSnsUrl(snsUrl) }));
+  }, [snsUrl]);
+
   const nicknameValid = validateNickname(nickname) === null;
   const bioValid = validateBio(bio) === null;
   const snsUrlValid = validateSnsUrl(snsUrl) === null;

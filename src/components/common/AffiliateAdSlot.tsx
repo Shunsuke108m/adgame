@@ -66,8 +66,7 @@ const AdLink = styled.a`
 const AdImage = styled.img`
   display: block;
   width: 100%;
-  aspect-ratio: 6 / 5;
-  object-fit: cover;
+  height: auto;
 `;
 
 const ImpressionPixel = styled.img`
