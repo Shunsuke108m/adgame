@@ -2,6 +2,31 @@ import { useCallback, useEffect, useState } from "react";
 import { requestOgpProfileImage, type OgpPayload } from "../api/ogpApi";
 
 const TOAST_DURATION_MS = 2500;
+const OGP_SHARE_FP_KEY_PREFIX = "ogpProfileLastRequested:";
+
+function getOgpFingerprint(payload: OgpPayload): string {
+  return `${payload.bestScore}|${payload.rankDisplay}`;
+}
+
+function getStorageKey(uid: string): string {
+  return `${OGP_SHARE_FP_KEY_PREFIX}${uid}`;
+}
+
+function getLastRequestedFingerprint(uid: string): string | null {
+  try {
+    return window.localStorage.getItem(getStorageKey(uid));
+  } catch {
+    return null;
+  }
+}
+
+function setLastRequestedFingerprint(uid: string, fingerprint: string): void {
+  try {
+    window.localStorage.setItem(getStorageKey(uid), fingerprint);
+  } catch {
+    // localStorage が使えない環境では重複抑止なしで続行する
+  }
+}
 
 /**
  * プロフィールページの「このカードを共有」用。
@@ -28,7 +53,14 @@ export function useProfilePageShare(ogpPayload?: OgpPayload): {
       .writeText(url)
       .then(() => {
         setCopyMessage("success");
-        if (ogpPayload) requestOgpProfileImage(ogpPayload);
+        if (!ogpPayload) return;
+
+        const fingerprint = getOgpFingerprint(ogpPayload);
+        const lastFingerprint = getLastRequestedFingerprint(ogpPayload.uid);
+        if (lastFingerprint === fingerprint) return;
+
+        requestOgpProfileImage(ogpPayload);
+        setLastRequestedFingerprint(ogpPayload.uid, fingerprint);
       })
       .catch(() => setCopyMessage("fail"));
   }, [ogpPayload]);

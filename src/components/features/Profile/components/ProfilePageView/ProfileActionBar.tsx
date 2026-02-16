@@ -9,6 +9,7 @@ import { Colors } from "~/styles/colors";
 export type ProfileActionBarProps = {
   showShare: boolean;
   showLogout: boolean;
+  shareDisabled?: boolean;
   /** 共有ボタン押下時に OGP 画像生成 API へ送る payload。未指定なら OGP リクエストは行わない。 */
   shareOgpPayload?: OgpPayload;
 };
@@ -22,6 +23,7 @@ const WITHDRAW_CONFIRM_MESSAGE =
 export const ProfileActionBar: React.FC<ProfileActionBarProps> = ({
   showShare,
   showLogout,
+  shareDisabled = false,
   shareOgpPayload,
 }) => {
   const { handleShare, copyMessage } = useProfilePageShare(shareOgpPayload);
@@ -43,9 +45,16 @@ export const ProfileActionBar: React.FC<ProfileActionBarProps> = ({
     <ActionBar>
       {showShare && (
         <ShareBlock>
-          <ShareButton type="button" onClick={handleShare}>
+          <ShareButton
+            type="button"
+            onClick={handleShare}
+            disabled={shareDisabled}
+            aria-disabled={shareDisabled}
+            aria-busy={shareDisabled}
+          >
             このカードを共有
           </ShareButton>
+          {shareDisabled && <CopyToast>順位を読み込み中です...</CopyToast>}
           {copyMessage === "success" && (
             <CopyToast>コピーしました！</CopyToast>
           )}
@@ -106,6 +115,12 @@ const ShareButton = styled.button`
   &:hover {
     opacity: 0.95;
     transform: translateY(-1px);
+  }
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
 `;
 

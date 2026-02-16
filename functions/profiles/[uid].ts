@@ -6,16 +6,16 @@
  *   OGP_META_API_BASE - OGP メタ取得 API のベース URL（例: https://ogp-api.example.com）
  *   ※ GET {OGP_META_API_BASE}/ogp/profiles/{uid}/meta が
  *      JSON で { ogTitle, ogDescription, ogImageUrl, ogUrl } を返すこと
- *   未設定の場合はメタ注入を行わず、通常の index.html を返す。
+ *   未設定の場合はフォールバックメタを差し込む。
  */
 
 const FALLBACK_TITLE = "プロフィール - 広告運用ゲーム";
 const FALLBACK_DESCRIPTION = "広告運用ゲームのプロフィールページです。";
 const FALLBACK_APP_ORIGIN = "https://adgame-web.skikatte.com";
-const FALLBACK_OGP_ORIGIN = "https://ogp-api.adgame-web.skikatte.com";
+const FALLBACK_OGP_IMAGE_URL = `${FALLBACK_APP_ORIGIN}/ogp/adgame_ogp_main.png`;
 
-const META_KEYS = ["ogTitle", "ogDescription", "ogImageUrl", "ogUrl"] as const;
-type OgpMetaJson = Partial<Record<(typeof META_KEYS)[number], string>>;
+type OgpMetaKey = "ogTitle" | "ogDescription" | "ogImageUrl" | "ogUrl";
+type OgpMetaJson = Partial<Record<OgpMetaKey, string>>;
 
 function escapeHtml(s: string): string {
   return s
@@ -28,7 +28,7 @@ function escapeHtml(s: string): string {
 function buildMetaTags(meta: OgpMetaJson): string {
   const title = meta.ogTitle ?? FALLBACK_TITLE;
   const description = meta.ogDescription ?? FALLBACK_DESCRIPTION;
-  const imageUrl = meta.ogImageUrl ?? "";
+  const imageUrl = meta.ogImageUrl ?? FALLBACK_OGP_IMAGE_URL;
   const url = meta.ogUrl ?? FALLBACK_APP_ORIGIN;
   return [
     `<meta property="og:title" content="${escapeHtml(title)}" />`,
@@ -47,6 +47,12 @@ type PagesFunctionEnv = {
   OGP_META_API_BASE?: string;
 };
 
+function pickNonEmpty(primary: string | undefined, fallback: string): string {
+  if (typeof primary !== "string") return fallback;
+  const value = primary.trim();
+  return value.length > 0 ? value : fallback;
+}
+
 export async function onRequestGet(context: {
   env: PagesFunctionEnv;
   params: Record<string, string | undefined>;
@@ -58,7 +64,7 @@ export async function onRequestGet(context: {
   const fallbackMeta: OgpMetaJson = {
     ogTitle: FALLBACK_TITLE,
     ogDescription: FALLBACK_DESCRIPTION,
-    ogImageUrl: `${FALLBACK_OGP_ORIGIN}/ogp/${safeUid}.png`,
+    ogImageUrl: FALLBACK_OGP_IMAGE_URL,
     ogUrl: `${FALLBACK_APP_ORIGIN}/profiles/${safeUid}`,
   };
 
@@ -73,10 +79,13 @@ export async function onRequestGet(context: {
       if (res.ok) {
         const json = (await res.json()) as OgpMetaJson;
         meta = {
-          ogTitle: json.ogTitle ?? fallbackMeta.ogTitle,
-          ogDescription: json.ogDescription ?? fallbackMeta.ogDescription,
-          ogImageUrl: json.ogImageUrl ?? fallbackMeta.ogImageUrl,
-          ogUrl: json.ogUrl ?? fallbackMeta.ogUrl,
+          ogTitle: pickNonEmpty(json.ogTitle, fallbackMeta.ogTitle!),
+          ogDescription: pickNonEmpty(
+            json.ogDescription,
+            fallbackMeta.ogDescription!
+          ),
+          ogImageUrl: pickNonEmpty(json.ogImageUrl, fallbackMeta.ogImageUrl!),
+          ogUrl: pickNonEmpty(json.ogUrl, fallbackMeta.ogUrl!),
         };
       }
     } catch {

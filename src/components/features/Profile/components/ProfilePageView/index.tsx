@@ -39,6 +39,7 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
     const entry = topScores.find((e) => e.uid === uid);
     return entry != null ? `${entry.rank}位` : "100位圏外";
   }, [uid, topScores, topScoresLoading]);
+  const shareDisabled = topScoresLoading || rankDisplay === "--";
 
   // 常に同じ順でフックを呼ぶため、早期 return より前に定義（profile が null のときは未使用）
   const shareOgpPayload = useMemo(
@@ -102,6 +103,7 @@ export const ProfilePageView: React.FC<ProfilePageViewProps> = ({ uid }) => {
         <ProfileActionBar
           showShare={true}
           showLogout={isMine(uid)}
+          shareDisabled={shareDisabled}
           shareOgpPayload={shareOgpPayload ?? undefined}
         />
         <AffiliateAdSlot />
